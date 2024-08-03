@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "440138373386",
+    "project_id": "marshal-33e85",
+    "storage_bucket": "marshal-33e85.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440138373386:android:5ba802fcb5b323a1ef02f3",
+        "android_client_info": {
+          "package_name": "marshal.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBppF0iYkwh3VdToHwIGdyTLp6B0R0JoGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
