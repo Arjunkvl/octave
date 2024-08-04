@@ -144,6 +144,11 @@ class _PlayingPageState extends State<PlayingPage>
                                 thumbGlowColor: const Color(0xDAFFFFFF),
                                 progress: state.playerDetailsEntitiy.progress,
                                 total: state.playerDetailsEntitiy.totalDuration,
+                                onSeek: (value) {
+                                  context
+                                      .read<PlayingPageBloc>()
+                                      .add(SeekEvent(progress: value));
+                                },
                               );
                             } else {
                               return ProgressBar(

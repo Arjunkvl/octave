@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:marshal/Api/get_image_url.dart';
+
 import 'package:marshal/Presentation/pages/Home%20Page/helpers/navigation.dart';
 import 'package:marshal/data/models/song_model.dart';
 

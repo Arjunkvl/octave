@@ -51,3 +51,11 @@ class UpdatePlayerBarEvent extends PlayingPageEvent {
   @override
   List<Object> get props => [progress];
 }
+
+class SeekEvent extends PlayingPageEvent {
+  final Duration progress;
+
+  SeekEvent({required this.progress});
+  @override
+  List<Object> get props => [progress];
+}

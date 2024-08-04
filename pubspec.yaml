@@ -43,6 +43,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.10+1
   get_it: ^7.7.0
+  hive_flutter: ^1.1.0
   hydrated_bloc: ^9.1.5
   json_annotation: ^4.9.0
   just_audio: ^0.9.39
@@ -56,7 +57,7 @@ dev_dependencies:
   flutter_native_splash: ^2.4.1
   flutter_test:
     sdk: flutter
-
+  hive_generator: ^2.0.1
   json_serializable: ^6.8.0
 
 # For information on the generic Dart part of this file, see the

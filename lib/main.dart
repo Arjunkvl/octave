@@ -13,7 +13,6 @@ import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
-// import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
 import 'package:marshal/firebase_options.dart';
 
 void main(List<String> args) async {
@@ -63,16 +62,6 @@ class Marshal extends StatelessWidget {
           theme: AppTheme.theme,
           debugShowCheckedModeBanner: false,
           home: const HomePage(),
-          // builder: (context, child) {
-          //   return Scaffold(
-          //     body: Container(
-          //       width: 300.w,
-          //       height: 50.h,
-          //       color: Colors.blue,
-          //       child: Text('data'),
-          //     ),
-          //   );
-          // },
         ),
       ),
     );

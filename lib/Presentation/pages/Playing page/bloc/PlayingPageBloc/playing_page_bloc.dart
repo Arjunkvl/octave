@@ -21,8 +21,10 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
   final SharedSongRepo sharedSongRepo;
   final SharedUrlRepo sharedUrlRepo;
   final player = AudioPlayer();
+
   PlayingPageBloc({required this.sharedUrlRepo, required this.sharedSongRepo})
       : super(PlayingPageInitial()) {
+    player.setLoopMode(LoopMode.all);
     final playList = ConcatenatingAudioSource(
       useLazyPreparation: true,
       shuffleOrder: DefaultShuffleOrder(),
@@ -52,20 +54,24 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
         player.setAudioSource(playList);
       }
       if (!sharedSongRepo.currentlyPlayingSongList.contains(event.song)) {
-        playList.add(locator<AddSongstoPlayList>().call(
+        await playList.add(locator<AddSongstoPlayList>().call(
             url: sharedUrlRepo.songUrlList[event.index],
             coverUrl: sharedUrlRepo.coverUrlList[event.index],
             song: sharedSongRepo.newReleaseList[event.index],
             sharedSongRepo: sharedSongRepo));
+        await player.seek(Duration.zero,
+            index: sharedSongRepo.currentlyPlayingSongList.indexOf(event.song));
         await player.play();
       }
-      log(sharedSongRepo.currentlyPlayingSongList[player.currentIndex!]
-          .toString());
-      log(event.song.toString());
+
       if (sharedSongRepo.currentlyPlayingSongList[player.currentIndex!] !=
           event.song) {
         log('kk');
-        player.seek(Duration.zero, index: 1);
+        await player.seek(Duration.zero,
+            index: sharedSongRepo.currentlyPlayingSongList.indexOf(event.song));
+        if (!player.playing) {
+          await player.play();
+        }
       }
     });
     on<PlaySongEvent>((event, emit) async {
@@ -89,15 +95,6 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
 
     //skip to Next Eveny adds new song to the playlist;
     on<SkipNextEvent>((event, emit) async {
-      int index = event.index + 1;
-      if (!player.hasNext) {
-        playList.add(locator<AddSongstoPlayList>().call(
-            url: sharedUrlRepo.songUrlList[index],
-            coverUrl: sharedUrlRepo.coverUrlList[index],
-            song: sharedSongRepo.newReleaseList[index],
-            sharedSongRepo: sharedSongRepo));
-        await player.seekToNext();
-      }
       await player.seekToNext();
     });
     on<SkipPreviousEvent>((event, emit) async {
@@ -109,6 +106,10 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
             totalDuration: player.duration ?? Duration.zero,
             progress: event.progress),
       ));
+    });
+
+    on<SeekEvent>((event, emit) async {
+      await player.seek(event.progress);
     });
   }
 
