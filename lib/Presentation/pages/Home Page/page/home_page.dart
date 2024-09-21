@@ -1,8 +1,14 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
+import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/page/audio_upload_page.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/HomePageBloc/home_page_bloc.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/helpers/sliver_for_sticky_top.dart';
@@ -29,6 +35,32 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          FilePickerResult? result = await FilePicker.platform.pickFiles(
+            type: FileType.audio,
+            allowMultiple: false,
+          );
+
+          if (result != null) {
+            File audioFile = File(result.files.single.path!);
+            if (context.mounted) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AudioUploadPage(
+                    audioFile: audioFile,
+                  ),
+                ),
+              );
+            }
+          }
+        },
+        backgroundColor: Colors.green,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+            side: BorderSide(width: 150.w)),
+        child: const Icon(Icons.add),
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -46,7 +78,11 @@ class _HomePageState extends State<HomePage> {
                         onTap: () {
                           goToSelectPage(context);
                         },
-                        child: SvgPicture.asset(AppIcons.searchIcon),
+                        child: GestureDetector(
+                            onTap: () async {
+                              await FirebaseAuth.instance.signOut();
+                            },
+                            child: SvgPicture.asset(AppIcons.searchIcon)),
                       ),
                       SizedBox(
                         width: 20.w,
@@ -143,10 +179,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                   BlocBuilder<HomePageBloc, HomePageState>(
                     builder: (context, state) {
+                      log(state.toString());
                       if (state is HomePageLoaded) {
                         return BodyListView(
                           songs: state.songs,
-                          coverUrlList: state.coverUrlList,
                         );
                       } else {
                         return const SliverToBoxAdapter(

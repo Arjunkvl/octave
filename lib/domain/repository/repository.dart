@@ -5,7 +5,6 @@ import 'package:marshal/domain/repository/shared_song_repo.dart';
 
 abstract class SongRepo {
   Future<Option> getNewReleseas();
-  Future<List<String>> generateCoverUrls(SharedSongRepo sharedSongrepo);
   Future<List<String>> generateSongUrls(SharedSongRepo sharedSongRepo);
   AudioSource addSongstoPlayList(
       {required String url,

@@ -1,6 +1,7 @@
 class AppIcons {
   static String basePath = 'Assets/Images/Icons/';
   static String format = '.svg';
+  static String appIcon = 'Assets/Images/AppIcon/appIcon.svg';
   static String notificationIcon = '${basePath}notification$format';
   static String settingsIcon = '${basePath}settings$format';
   static String recentIcon = '${basePath}recent$format';

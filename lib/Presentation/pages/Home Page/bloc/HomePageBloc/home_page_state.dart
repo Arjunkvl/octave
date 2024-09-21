@@ -14,9 +14,29 @@ class HomePageError extends HomePageState {}
 @JsonSerializable()
 class HomePageLoaded extends HomePageState {
   final List<Song> songs;
-  final List<String> coverUrlList;
 
-  HomePageLoaded({required this.coverUrlList, required this.songs});
+  HomePageLoaded({required this.songs});
   @override
-  List<Object> get props => [songs, coverUrlList];
+  List<Object> get props => [songs];
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'songs': songs.map((x) => x.toMap()).toList(),
+    };
+  }
+
+  factory HomePageLoaded.fromMap(Map<String, dynamic> map) {
+    return HomePageLoaded(
+      songs: List<Song>.from(
+        (map['songs'] as List<int>).map<Song>(
+          (x) => Song.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory HomePageLoaded.fromJson(String source) =>
+      HomePageLoaded.fromMap(json.decode(source) as Map<String, dynamic>);
 }

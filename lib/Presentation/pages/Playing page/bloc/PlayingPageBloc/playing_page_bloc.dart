@@ -1,9 +1,8 @@
 import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:marshal/Presentation/pages/Playing%20page/helpers/animation_controller.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/data/models/song_model.dart';
@@ -40,23 +39,20 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
     player.playingStream.listen(
       (event) {
         isPlaying.value = event;
-        if (event) {
-          animationController.reverse();
-        } else {
-          animationController.forward();
-        }
       },
     );
 
     on<LoadSongEvent>((event, emit) async {
+      log('Load song event');
       log(player.currentIndex.toString());
       if (player.currentIndex == null) {
+        player.setPreferredPeakBitRate(100);
         player.setAudioSource(playList);
       }
       if (!sharedSongRepo.currentlyPlayingSongList.contains(event.song)) {
         await playList.add(locator<AddSongstoPlayList>().call(
             url: sharedUrlRepo.songUrlList[event.index],
-            coverUrl: sharedUrlRepo.coverUrlList[event.index],
+            coverUrl: event.song.coverUrl,
             song: sharedSongRepo.newReleaseList[event.index],
             sharedSongRepo: sharedSongRepo));
         await player.seek(Duration.zero,
@@ -66,7 +62,6 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
 
       if (sharedSongRepo.currentlyPlayingSongList[player.currentIndex!] !=
           event.song) {
-        log('kk');
         await player.seek(Duration.zero,
             index: sharedSongRepo.currentlyPlayingSongList.indexOf(event.song));
         if (!player.playing) {

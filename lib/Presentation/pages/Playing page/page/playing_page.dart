@@ -7,7 +7,6 @@ import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:marshal/Presentation/core/dynamic%20Ui/dynamic_color.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
-import 'package:marshal/Presentation/pages/Playing%20page/helpers/animation_controller.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
 import 'package:marshal/data/models/song_model.dart';
 
@@ -34,10 +33,6 @@ class _PlayingPageState extends State<PlayingPage>
     context.read<PlayingPageBloc>().add(
           LoadSongEvent(song: widget.song, index: widget.index),
         );
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 250),
-    );
   }
 
   @override
@@ -119,7 +114,9 @@ class _PlayingPageState extends State<PlayingPage>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.song.name,
+                              widget.song.name.length > 20
+                                  ? widget.song.name.substring(0, 20)
+                                  : widget.song.name,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             SvgPicture.asset(AppIcons.fav),
@@ -180,42 +177,44 @@ class _PlayingPageState extends State<PlayingPage>
                                       SkipPreviousEvent(index: widget.index));
                                 },
                                 child: SvgPicture.asset(AppIcons.skipPrevious)),
-                            GestureDetector(
-                              onTap: () {
-                                if (isPlaying.value) {
-                                  // Only dispatch PauseSongEvent if the song is currently playing
-                                  animationController.reverse();
-                                  context
-                                      .read<PlayingPageBloc>()
-                                      .add(PauseSongEvent());
-                                  // Update state after dispatching
-                                  isPlaying.value = false;
-                                  return;
-                                } else {
-                                  animationController.forward();
-                                  // Only dispatch PlaySongEvent if the song is currently paused
-                                  context
-                                      .read<PlayingPageBloc>()
-                                      .add(PlaySongEvent());
-                                  // Update state after dispatching
-                                  isPlaying.value = true;
-                                  return;
-                                }
-                              },
-                              child: Container(
-                                width: 50.w,
-                                height: 50.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color: Colors.white,
-                                ),
-                                child: Center(
-                                  child: AnimatedIcon(
-                                    color: Colors.black,
-                                    icon: AnimatedIcons.pause_play,
-                                    size: 50,
-                                    progress: animationController,
-                                  ),
+                            Container(
+                              width: 50.w,
+                              height: 50.w,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Colors.white,
+                              ),
+                              child: Center(
+                                child: IconButton(
+                                  color: Colors.black,
+                                  onPressed: () {
+                                    if (isPlaying.value) {
+                                      // Only dispatch PauseSongEvent if the song is currently playing
+
+                                      context
+                                          .read<PlayingPageBloc>()
+                                          .add(PauseSongEvent());
+                                      // Update state after dispatching
+                                      isPlaying.value = false;
+                                    } else {
+                                      // Only dispatch PlaySongEvent if the song is currently paused
+                                      context
+                                          .read<PlayingPageBloc>()
+                                          .add(PlaySongEvent());
+                                      // Update state after dispatching
+                                      isPlaying.value = true;
+                                    }
+                                  },
+                                  icon: ValueListenableBuilder(
+                                      valueListenable: isPlaying,
+                                      builder: (context, value, _) {
+                                        return Icon(
+                                          size: 30,
+                                          value
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                        );
+                                      }),
                                 ),
                               ),
                             ),

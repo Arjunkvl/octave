@@ -5,11 +5,10 @@ import 'package:marshal/data/models/song_model.dart';
 
 class BodyListView extends StatelessWidget {
   final List<Song> songs;
-  final List<String> coverUrlList;
+
   const BodyListView({
     super.key,
     required this.songs,
-    required this.coverUrlList,
   });
 
   @override
@@ -27,7 +26,7 @@ class BodyListView extends StatelessWidget {
           itemBuilder: (context, index) => SongListViewTile(
             song: songs[index],
             index: index,
-            coverUrl: coverUrlList[index],
+            coverUrl: songs[index].coverUrl,
           ),
         ),
       ),

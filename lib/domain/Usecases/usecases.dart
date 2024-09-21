@@ -22,15 +22,6 @@ class GenerateSongUrls {
   }
 }
 
-class GenerateCoverUrls {
-  final SongRepoImpl repository;
-
-  GenerateCoverUrls({required this.repository});
-  Future<List<String>> call(SharedSongRepo sharedSongRepo) async {
-    return await repository.generateCoverUrls(sharedSongRepo);
-  }
-}
-
 class AddSongstoPlayList {
   final SongRepoImpl repository;
 
