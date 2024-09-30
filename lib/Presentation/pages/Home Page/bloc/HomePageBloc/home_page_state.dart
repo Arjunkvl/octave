@@ -16,6 +16,7 @@ class HomePageLoaded extends HomePageState {
   final List<Song> songs;
 
   HomePageLoaded({required this.songs});
+
   @override
   List<Object> get props => [songs];
 
@@ -23,6 +24,10 @@ class HomePageLoaded extends HomePageState {
     return <String, dynamic>{
       'songs': songs.map((x) => x.toMap()).toList(),
     };
+  }
+
+  HomePageLoaded copyWith({List<Song>? songs}) {
+    return HomePageLoaded(songs: songs ?? this.songs);
   }
 
   factory HomePageLoaded.fromMap(Map<String, dynamic> map) {

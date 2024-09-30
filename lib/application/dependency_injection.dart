@@ -31,8 +31,10 @@ void setUpLocator() {
   //Usecases;
   locator.registerSingleton<GetNewReleseas>(
       GetNewReleseas(repository: repository));
-  locator.registerSingleton<GenerateSongUrls>(
-      GenerateSongUrls(repository: repository));
+  locator.registerSingleton<GetRecentSongs>(
+      GetRecentSongs(repository: repository));
+  // locator.registerSingleton<GenerateSongUrls>(
+  //     GenerateSongUrls(repository: repository));
   locator.registerSingleton<AddSongstoPlayList>(
       AddSongstoPlayList(repository: repository));
 
@@ -49,4 +51,7 @@ void setUpLocator() {
       .registerSingleton<UploadAudio>(UploadAudio(repository: audioManageRepo));
   locator.registerSingleton<UploadEssentials>(
       UploadEssentials(repository: audioManageRepo));
+
+  locator.registerSingleton<UploadToRecentSongs>(
+      UploadToRecentSongs(repository: audioManageRepo));
 }

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:audiotags/audiotags.dart';
 import 'package:dartz/dartz.dart';
@@ -26,16 +25,17 @@ class AudioUploadBloc extends Bloc<AudioUploadEvent, AudioUploadState> {
       });
     });
     on<UploadAudioEvent>((event, emit) async {
-      // String songId = DateTime.now().microsecondsSinceEpoch.toString();
-      Uint8List idGList = await event.audioFile.readAsBytes();
-      String songId = idGList.sublist(0, 20).join('');
+      String songId = DateTime.now().microsecondsSinceEpoch.toString();
+      // Uint8List idGList = await event.audioFile.readAsBytes();
+      // String songId = idGList.sublist(0, 20).join('');
+
       UploadTask uploadTask = await locator<UploadAudio>()
           .call(audioFile: event.audioFile, songId: songId, tag: event.tag);
       await for (final taskSnapshot in uploadTask.snapshotEvents) {
         if (taskSnapshot.state == TaskState.success) {
           await locator<UploadEssentials>()
               .call(songId: songId, tag: event.tag);
-          emit(UploadeState(isCompleted: true, tag: event.tag));
+          emit(UploadCompletedState());
         }
       }
     });

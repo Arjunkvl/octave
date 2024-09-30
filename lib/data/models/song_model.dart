@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/adapters.dart';
 
@@ -9,38 +10,39 @@ class Song extends Equatable {
   @HiveField(0)
   final String author;
   @HiveField(1)
-  final String coverId;
-  @HiveField(2)
   final String songId;
+  @HiveField(2)
+  final String songUrl;
   @HiveField(3)
-  final String ext;
-  @HiveField(4)
   final String name;
-  @HiveField(5)
+  @HiveField(4)
   final String coverUrl;
+  @HiveField(5)
+  final DateTime createdAt;
   Song(
-      {required this.author,
-      required this.coverId,
+      {required this.createdAt,
+      required this.author,
       required this.songId,
-      required this.ext,
+      required this.songUrl,
       required this.name,
-      this.coverUrl = ''});
+      required this.coverUrl});
 
   Song copyWith({
     String? author,
     String? coverId,
     String? songId,
-    String? ext,
+    String? songUrl,
     String? name,
     String? coverUrl,
+    DateTime? createdAt,
   }) {
     return Song(
       author: author ?? this.author,
-      coverId: coverId ?? this.coverId,
       songId: songId ?? this.songId,
-      ext: ext ?? this.ext,
+      songUrl: songUrl ?? this.songUrl,
       name: name ?? this.name,
       coverUrl: coverUrl ?? this.coverUrl,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -48,34 +50,37 @@ class Song extends Equatable {
   factory Song.fromDocument(Map<String, dynamic> doc) {
     return Song(
       author: doc['author'] ?? '', // Provide default value if key is missing
-      coverId: doc['coverId'] ?? '',
+
       songId: doc['songId'] ?? '',
-      ext: doc['ext'] ?? '',
+      songUrl: doc['songUrl'] ?? '',
       name: doc['name'] ?? '',
-      coverUrl:
-          doc['coverUrl'] ?? '', // Provide default value if key is missing
+      coverUrl: doc['coverUrl'] ?? '',
+      createdAt: doc['createdAt'].toDate() ??
+          '', // Provide default value if key is missing
     );
   }
   @override
-  List<Object?> get props => [author, coverId, songId, ext, name, coverUrl];
+  List<Object?> get props =>
+      [author, songId, songUrl, name, coverUrl, createdAt];
 
   Map<String, dynamic> toMap() {
     return {
       'author': author,
-      'coverId': coverId,
       'songId': songId,
-      'ext': ext,
+      'songUrl': songUrl,
+      'coverUrl': coverUrl,
       'name': name,
-      'coverUrl': coverId,
+      'createdAt': createdAt,
     };
   }
 
   static Song fromMap(Map<String, dynamic> map) {
     return Song(
         author: map['author'],
-        coverId: map['coverId'],
         songId: map['songId'],
-        ext: map['ext'],
-        name: map['name']);
+        songUrl: map['songUrl'],
+        name: map['name'],
+        coverUrl: map['coverUrl'],
+        createdAt: map['createdAt']);
   }
 }

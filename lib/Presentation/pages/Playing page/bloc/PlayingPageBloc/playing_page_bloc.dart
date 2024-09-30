@@ -7,6 +7,7 @@ import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifie
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/data/models/song_model.dart';
 import 'package:marshal/data/repository/song_repo_impl.dart';
+import 'package:marshal/domain/Usecases/audio%20manage%20usecases/audio_usecases.dart';
 import 'package:marshal/domain/Usecases/usecases.dart';
 import 'package:marshal/domain/entities/Player%20Details%20Entity/player_details_entitiy.dart';
 import 'package:marshal/domain/repository/shared_song_repo.dart';
@@ -43,20 +44,19 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
     );
 
     on<LoadSongEvent>((event, emit) async {
-      log('Load song event');
-      log(player.currentIndex.toString());
       if (player.currentIndex == null) {
         player.setPreferredPeakBitRate(100);
         player.setAudioSource(playList);
       }
       if (!sharedSongRepo.currentlyPlayingSongList.contains(event.song)) {
         await playList.add(locator<AddSongstoPlayList>().call(
-            url: sharedUrlRepo.songUrlList[event.index],
+            url: event.song.songUrl,
             coverUrl: event.song.coverUrl,
             song: sharedSongRepo.newReleaseList[event.index],
             sharedSongRepo: sharedSongRepo));
         await player.seek(Duration.zero,
             index: sharedSongRepo.currentlyPlayingSongList.indexOf(event.song));
+        await locator<UploadToRecentSongs>().call(song: event.song);
         await player.play();
       }
 

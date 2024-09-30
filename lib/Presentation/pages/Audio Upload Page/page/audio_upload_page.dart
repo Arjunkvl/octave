@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/bloc/audio_upload_bloc.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
 
 class AudioUploadPage extends StatelessWidget {
   final File audioFile;
@@ -96,15 +98,42 @@ class AudioUploadPage extends StatelessWidget {
                       onTap: () {
                         context.read<AudioUploadBloc>().add(UploadAudioEvent(
                             audioFile: audioFile, tag: state.tag));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.white,
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.all(10.w),
+                            content: const Text("Upload In Progress"),
+                          ),
+                        );
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(100),
+                      child: BlocListener<AudioUploadBloc, AudioUploadState>(
+                        listener: (context, state) {
+                          if (state is UploadCompletedState) {
+                            log('calleddddddd');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.white,
+                                behavior: SnackBarBehavior.floating,
+                                margin: EdgeInsets.all(10.w),
+                                content: const Text('Upload Copleted'),
+                              ),
+                            );
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => const HomePage()),
+                                (Route route) => false);
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          width: 100.w,
+                          height: 30.h,
+                          child: const Center(child: Text('Upload')),
                         ),
-                        width: 100.w,
-                        height: 30.h,
-                        child: const Center(child: Text('Upload')),
                       ),
                     )
                   ],

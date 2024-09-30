@@ -4,16 +4,19 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/page/audio_upload_page.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/HomePageBloc/home_page_bloc.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/Recent%20Songs%20Cubit/recent_songs_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/helpers/sliver_for_sticky_top.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/widgets/body_list_view.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/helpers/variables.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/recent_widget_at_top.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/top_tile.dart';
 import 'package:marshal/Presentation/pages/Select%20Page/select_page.dart';
 
@@ -28,7 +31,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     context.read<GreetingsCubit>().setGreeting();
-    context.read<HomePageBloc>().add(GetRequiredData());
+    context.read<RecentSongsCubit>().getRecentSongs();
+    context.read<HomePageBloc>().add(GetRequiredData(lastSong: ''));
+
     super.initState();
   }
 
@@ -57,8 +62,8 @@ class _HomePageState extends State<HomePage> {
         },
         backgroundColor: Colors.green,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-            side: BorderSide(width: 150.w)),
+          borderRadius: BorderRadius.circular(50),
+        ),
         child: const Icon(Icons.add),
       ),
       body: SafeArea(
@@ -159,7 +164,49 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  // const BodyListView(),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 200,
+                      child: BlocBuilder<RecentSongsCubit, RecentSongsState>(
+                        builder: (context, state) {
+                          if (state is RecentSongLoaded) {
+                            return NotificationListener(
+                              onNotification:
+                                  (ScrollNotification notification) {
+                                if (notification.metrics.pixels ==
+                                    notification.metrics.maxScrollExtent) {
+                                  if (!isfetching &&
+                                      state.songs.last.songId !=
+                                          lastFecthedId) {
+                                    log(state.songs.last.toString());
+                                    isfetching = true;
+                                    log('Reached the last index!');
+                                  }
+                                }
+                                return true;
+                              },
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: state.songs.length,
+                                separatorBuilder: (context, index) => SizedBox(
+                                  width: 10.w,
+                                ),
+                                itemBuilder: (context, index) =>
+                                    SongListViewTile(
+                                  song: state.songs[index],
+                                  index: index,
+                                  coverUrl: state.songs[index].coverUrl,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      ),
+                    ),
+                  ),
                   SliverToBoxAdapter(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,10 +226,46 @@ class _HomePageState extends State<HomePage> {
                   ),
                   BlocBuilder<HomePageBloc, HomePageState>(
                     builder: (context, state) {
-                      log(state.toString());
+                      // log(state.toString());
                       if (state is HomePageLoaded) {
-                        return BodyListView(
-                          songs: state.songs,
+                        return SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: 200,
+                            child: NotificationListener<ScrollNotification>(
+                              onNotification:
+                                  (ScrollNotification notification) {
+                                if (notification.metrics.pixels ==
+                                    notification.metrics.maxScrollExtent) {
+                                  log(state.songs.last.songId +
+                                      isfetching.toString());
+                                  if (!isfetching &&
+                                      state.songs.last.songId !=
+                                          lastFecthedId) {
+                                    isfetching = true;
+                                    log('Reached the last index!');
+                                    context.read<HomePageBloc>().add(
+                                        GetRequiredData(
+                                            lastSong: state.songs.last.songId));
+                                  }
+                                }
+                                return true;
+                              },
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: state.songs.length,
+                                separatorBuilder: (context, index) => SizedBox(
+                                  width: 10.w,
+                                ),
+                                itemBuilder: (context, index) =>
+                                    SongListViewTile(
+                                  song: state.songs[index],
+                                  index: index,
+                                  coverUrl: state.songs[index].coverUrl,
+                                ),
+                              ),
+                            ),
+                          ),
                         );
                       } else {
                         return const SliverToBoxAdapter(

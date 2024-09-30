@@ -8,19 +8,27 @@ class GetNewReleseas {
   final SongRepoImpl repository;
 
   GetNewReleseas({required this.repository});
-  Future<Option> call() async {
-    return await repository.getNewReleseas();
+  Future<Option<List<Song>>> call({String lastSong = ''}) async {
+    return await repository.getNewReleseas(lastSong: lastSong);
   }
 }
 
-class GenerateSongUrls {
+class GetRecentSongs {
   final SongRepoImpl repository;
 
-  GenerateSongUrls({required this.repository});
-  Future<List<String>> call(SharedSongRepo sharedSongRepo) async {
-    return await repository.generateSongUrls(sharedSongRepo);
+  GetRecentSongs({required this.repository});
+  Future<Option<List<Song>>> call({String lastSong = ''}) async {
+    return await repository.getRecentSongs(lastSong: lastSong);
   }
 }
+// class GenerateSongUrls {
+//   final SongRepoImpl repository;
+
+//   GenerateSongUrls({required this.repository});
+//   Future<List<String>> call(SharedSongRepo sharedSongRepo) async {
+//     return await repository.generateSongUrls(sharedSongRepo);
+//   }
+// }
 
 class AddSongstoPlayList {
   final SongRepoImpl repository;
