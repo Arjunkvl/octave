@@ -41,13 +41,13 @@ class SongListViewTile extends StatelessWidget {
           height: 5.h,
         ),
         Text(
-          song.name.length > 20 ? song.name.substring(0, 20) : song.name,
+          song.title.length > 20 ? song.title.substring(0, 20) : song.title,
           style: Theme.of(context).textTheme.bodySmall,
         ),
         SizedBox(
           width: 120.w,
           child: Text(
-            song.author,
+            song.artist,
             maxLines: 2,
             softWrap: true,
             style: Theme.of(context).textTheme.displayMedium,

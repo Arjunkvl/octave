@@ -16,7 +16,7 @@ class ExtractMetadataEvent extends AudioUploadEvent {
 
 class UploadAudioEvent extends AudioUploadEvent {
   final File audioFile;
-  final Tag tag;
+  final ID3Tag tag;
   UploadAudioEvent({required this.tag, required this.audioFile});
   @override
   List<Object> get props => [audioFile, tag];

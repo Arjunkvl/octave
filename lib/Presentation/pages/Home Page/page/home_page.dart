@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gap/gap.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/page/audio_upload_page.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/HomePageBloc/home_page_bloc.dart';
@@ -130,150 +131,30 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) => const RecentWidgetAtTop(),
                   ),
                   SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        Text(
-                          'Jump back in',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        SizedBox(
-                          height: 15.h,
-                        ),
-                      ],
-                    ),
-                  ),
-                  // const BodyListView(),
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        Text(
-                          'Recently played',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        SizedBox(
-                          height: 15.h,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SliverToBoxAdapter(
                     child: SizedBox(
-                      height: 200,
-                      child: BlocBuilder<RecentSongsCubit, RecentSongsState>(
-                        builder: (context, state) {
-                          if (state is RecentSongLoaded) {
-                            return NotificationListener(
-                              onNotification:
-                                  (ScrollNotification notification) {
-                                if (notification.metrics.pixels ==
-                                    notification.metrics.maxScrollExtent) {
-                                  if (!isfetching &&
-                                      state.songs.last.songId !=
-                                          lastFecthedId) {
-                                    log(state.songs.last.toString());
-                                    isfetching = true;
-                                    log('Reached the last index!');
-                                  }
-                                }
-                                return true;
-                              },
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: state.songs.length,
-                                separatorBuilder: (context, index) => SizedBox(
-                                  width: 10.w,
-                                ),
-                                itemBuilder: (context, index) =>
-                                    SongListViewTile(
-                                  song: state.songs[index],
-                                  index: index,
-                                  coverUrl: state.songs[index].coverUrl,
-                                ),
-                              ),
-                            );
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
-                      ),
+                      height: 20.h,
                     ),
                   ),
                   SliverToBoxAdapter(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        Text(
-                          'New releases for you',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        SizedBox(
-                          height: 15.h,
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: 0,
+                          itemBuilder: (context, index) => Container(
+                              height: 200,
+                              child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: [
+                                    Text('data'),
+                                    Text('data'),
+                                    Text('data'),
+                                  ])),
                         ),
                       ],
                     ),
-                  ),
-                  BlocBuilder<HomePageBloc, HomePageState>(
-                    builder: (context, state) {
-                      // log(state.toString());
-                      if (state is HomePageLoaded) {
-                        return SliverToBoxAdapter(
-                          child: SizedBox(
-                            height: 200,
-                            child: NotificationListener<ScrollNotification>(
-                              onNotification:
-                                  (ScrollNotification notification) {
-                                if (notification.metrics.pixels ==
-                                    notification.metrics.maxScrollExtent) {
-                                  log(state.songs.last.songId +
-                                      isfetching.toString());
-                                  if (!isfetching &&
-                                      state.songs.last.songId !=
-                                          lastFecthedId) {
-                                    isfetching = true;
-                                    log('Reached the last index!');
-                                    context.read<HomePageBloc>().add(
-                                        GetRequiredData(
-                                            lastSong: state.songs.last.songId));
-                                  }
-                                }
-                                return true;
-                              },
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: state.songs.length,
-                                separatorBuilder: (context, index) => SizedBox(
-                                  width: 10.w,
-                                ),
-                                itemBuilder: (context, index) =>
-                                    SongListViewTile(
-                                  song: state.songs[index],
-                                  index: index,
-                                  coverUrl: state.songs[index].coverUrl,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return const SliverToBoxAdapter(
-                          child: SizedBox(),
-                        );
-                      }
-                    },
-                  ),
+                  )
                 ],
               ),
             ],

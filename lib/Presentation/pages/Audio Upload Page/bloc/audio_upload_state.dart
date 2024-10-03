@@ -12,7 +12,7 @@ class AudioUploadInitial extends AudioUploadState {}
 class UploadCompletedState extends AudioUploadState {}
 
 class UploadeState extends AudioUploadState {
-  final Tag tag;
+  final ID3Tag tag;
   final bool isCompleted;
   UploadeState({required this.isCompleted, required this.tag});
   @override

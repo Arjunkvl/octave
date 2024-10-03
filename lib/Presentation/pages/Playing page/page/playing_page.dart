@@ -81,7 +81,7 @@ class _PlayingPageState extends State<PlayingPage>
                       ),
                     ),
                     Text(
-                      'From ${widget.song.author}',
+                      'From ${widget.song.artist}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     SvgPicture.asset(AppIcons.threeDot),
@@ -114,9 +114,9 @@ class _PlayingPageState extends State<PlayingPage>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.song.name.length > 20
-                                  ? widget.song.name.substring(0, 20)
-                                  : widget.song.name,
+                              widget.song.title.length > 20
+                                  ? widget.song.title.substring(0, 20)
+                                  : widget.song.title,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             SvgPicture.asset(AppIcons.fav),

@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,7 +38,7 @@ class AudioUploadPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.memory(
-                      state.tag.pictures.first.bytes,
+                      Uint8List.fromList(state.tag.pictures.first.imageData),
                       width: 150,
                     ),
                     Gap(30.h),
@@ -68,7 +69,7 @@ class AudioUploadPage extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                              text: state.tag.trackArtist,
+                              text: state.tag.artist,
                               style: Theme.of(context).textTheme.bodyLarge),
                         ],
                       ),

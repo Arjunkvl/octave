@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -83,7 +82,7 @@ class SongRepoImpl implements SongRepo {
       Uri.parse(url),
       tag: MediaItem(
         id: '0',
-        title: song.name,
+        title: song.title,
         artUri: Uri.parse(song.coverUrl),
       ),
     );
@@ -135,7 +134,7 @@ class SongRepoImpl implements SongRepo {
       }
     } else {
       final querySongs =
-          await query.orderBy('createdAt', descending: true).limit(5).get();
+          await query.orderBy('createdAt', descending: true).limit(10).get();
       List<Song> songs = querySongs.docs
           .map((song) => Song.fromDocument(song.data()))
           .toList();

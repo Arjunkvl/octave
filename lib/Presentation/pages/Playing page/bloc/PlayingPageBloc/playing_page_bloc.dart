@@ -56,7 +56,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
             sharedSongRepo: sharedSongRepo));
         await player.seek(Duration.zero,
             index: sharedSongRepo.currentlyPlayingSongList.indexOf(event.song));
-        await locator<UploadToRecentSongs>().call(song: event.song);
+        await locator<UploadToRecentSongs>().call(songId: event.song.songId);
         await player.play();
       }
 
