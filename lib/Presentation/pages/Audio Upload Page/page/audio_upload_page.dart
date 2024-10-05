@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -7,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/bloc/audio_upload_bloc.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
 
 class AudioUploadPage extends StatelessWidget {
   final File audioFile;
@@ -27,6 +25,31 @@ class AudioUploadPage extends StatelessWidget {
           if (state is AudioUploadInitial) {
             return const Center(
               child: Text('Extracting'),
+            );
+          }
+          if (state is UploadCompletedState) {
+            return Center(
+                child: Text(
+              'Upload Completed \nNow You Can Go Back',
+              style: Theme.of(context).textTheme.bodyLarge,
+              textAlign: TextAlign.center,
+            ));
+          }
+          if (state is Uploading) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  Gap(5.h),
+                  Text(
+                    'Uploading please wait...\nDo not exit',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
             );
           }
           if (state is UploadeState) {
@@ -90,10 +113,6 @@ class AudioUploadPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Gap(10.h),
-                    Visibility(
-                        visible: state.isCompleted,
-                        child: const Text('Upload Completed')),
                     Gap(120.h),
                     GestureDetector(
                       onTap: () {
@@ -108,35 +127,16 @@ class AudioUploadPage extends StatelessWidget {
                           ),
                         );
                       },
-                      child: BlocListener<AudioUploadBloc, AudioUploadState>(
-                        listener: (context, state) {
-                          if (state is UploadCompletedState) {
-                            log('calleddddddd');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Colors.white,
-                                behavior: SnackBarBehavior.floating,
-                                margin: EdgeInsets.all(10.w),
-                                content: const Text('Upload Copleted'),
-                              ),
-                            );
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => const HomePage()),
-                                (Route route) => false);
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          width: 100.w,
-                          height: 30.h,
-                          child: const Center(child: Text('Upload')),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(100),
                         ),
+                        width: 100.w,
+                        height: 30.h,
+                        child: const Center(child: Text('Upload')),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

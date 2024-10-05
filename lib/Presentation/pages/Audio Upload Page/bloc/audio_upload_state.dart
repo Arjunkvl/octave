@@ -9,6 +9,8 @@ abstract class AudioUploadState extends Equatable {
 
 class AudioUploadInitial extends AudioUploadState {}
 
+class Uploading extends AudioUploadState {}
+
 class UploadCompletedState extends AudioUploadState {}
 
 class UploadeState extends AudioUploadState {

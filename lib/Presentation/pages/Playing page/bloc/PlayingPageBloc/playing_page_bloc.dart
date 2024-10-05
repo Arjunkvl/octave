@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
@@ -11,7 +9,6 @@ import 'package:marshal/domain/Usecases/audio%20manage%20usecases/audio_usecases
 import 'package:marshal/domain/Usecases/usecases.dart';
 import 'package:marshal/domain/entities/Player%20Details%20Entity/player_details_entitiy.dart';
 import 'package:marshal/domain/repository/shared_song_repo.dart';
-import 'package:marshal/domain/repository/shared_url_repo.dart';
 
 part 'playing_page_event.dart';
 part 'playing_page_state.dart';
@@ -19,10 +16,10 @@ part 'playing_page_state.dart';
 class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
   final repository = SongRepoImpl();
   final SharedSongRepo sharedSongRepo;
-  final SharedUrlRepo sharedUrlRepo;
+
   final player = AudioPlayer();
 
-  PlayingPageBloc({required this.sharedUrlRepo, required this.sharedSongRepo})
+  PlayingPageBloc({required this.sharedSongRepo})
       : super(PlayingPageInitial()) {
     player.setLoopMode(LoopMode.all);
     final playList = ConcatenatingAudioSource(
@@ -52,7 +49,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
         await playList.add(locator<AddSongstoPlayList>().call(
             url: event.song.songUrl,
             coverUrl: event.song.coverUrl,
-            song: sharedSongRepo.newReleaseList[event.index],
+            song: event.song,
             sharedSongRepo: sharedSongRepo));
         await player.seek(Duration.zero,
             index: sharedSongRepo.currentlyPlayingSongList.indexOf(event.song));

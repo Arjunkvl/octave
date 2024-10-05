@@ -4,13 +4,15 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:id3tag/id3tag.dart';
 import 'package:marshal/Api/get_image_url.dart';
 import 'package:marshal/Api/get_song_url.dart';
 import 'package:marshal/data/models/song_model.dart';
-import 'package:marshal/data/models/upload%20song%20model/upload_song_model.dart';
+import 'package:marshal/data/models/Song%20Details%20Model/song_details_model.dart';
 
 import 'package:marshal/domain/repository/Audio%20Manage%20Repo/audio_manage_repo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,7 +44,12 @@ class AudioManageImpl implements AudioManageRepo {
     final Reference storageRef = FirebaseStorage.instance.ref();
     final FirebaseFirestore db = FirebaseFirestore.instance;
     final store = await SharedPreferences.getInstance();
+    final Box<Song> box = await Hive.openBox('songsBox');
     String uid = store.get('uid').toString();
+
+    //genre and realses year;
+    final genre = tag.frameWithTypeAndName<TextInformation>('TCON');
+    final realeseYear = tag.frameWithTypeAndName<TextInformation>('TYER');
     await storageRef
         .child('covers/$songId.webp')
         .putData(
@@ -53,14 +60,17 @@ class AudioManageImpl implements AudioManageRepo {
         'uploadedSongs': FieldValue.arrayUnion([songId])
       }, SetOptions(merge: true));
     }));
-    await db.collection('songs').doc(songId).set(Song(
-          uploadedAt: DateTime.now(),
-          artist: tag.artist ?? '',
-          songId: songId,
-          songUrl: await getSongUrl(songId),
-          title: tag.title ?? '',
-          coverUrl: await getCoverUrl(songId),
-        ).toMap());
+    final Song songSkelton = Song(
+      uploadedAt: DateTime.now(),
+      artist: tag.artist ?? '',
+      songId: songId,
+      songUrl: await getSongUrl(songId),
+      title: tag.title ?? '',
+      coverUrl: await getCoverUrl(songId),
+    );
+    box.put(songSkelton.songId, songSkelton);
+    await db.collection('songs').doc(songId).set(songSkelton.toMap());
+
     await db
         .collection('songs')
         .doc(songId)
@@ -68,10 +78,10 @@ class AudioManageImpl implements AudioManageRepo {
         .doc(songId)
         .set(SongDetailsModel(
           album: tag.album ?? '',
-          genre: tag.frameWithTypeAndName<TextInformation>('TCON')!.value,
+          genre: genre == null ? '' : genre.value,
           playCount: 0,
           likeCount: 0,
-          releaseYear: tag.frameWithTypeAndName<TextInformation>('TYER')!.value,
+          releaseYear: realeseYear == null ? '' : realeseYear.value,
           language: '',
         ).toMap());
   }
@@ -85,5 +95,45 @@ class AudioManageImpl implements AudioManageRepo {
     await db.collection('users').doc(uid).collection('songs').doc(uid).set({
       'recentSongs': FieldValue.arrayUnion([songId])
     }, SetOptions(merge: true));
+  }
+
+  @override
+  Future<Option<List<Song>>> getSongFromSongIds({required List songIds}) async {
+    List<Song> songs = [];
+    List<Future<QuerySnapshot<Map<String, dynamic>>>> futures = [];
+    List idsToFetch = [];
+    List result = [];
+    final Box<Song> box = await Hive.openBox('songsBox');
+    for (var id in songIds) {
+      Song? chacheSong = box.get(id);
+      if (chacheSong != null) {
+        songs.add(chacheSong);
+      } else {
+        idsToFetch.add(id);
+      }
+    }
+    if (idsToFetch.isNotEmpty) {
+      for (int i = 0; i < songIds.length; i += 10) {
+        final List bacthedId = songIds.sublist(
+            i, i + 10 > songIds.length ? songIds.length : i + 10);
+
+        futures.add(FirebaseFirestore.instance
+            .collection('songs')
+            .where(FieldPath.documentId, whereIn: bacthedId)
+            .get());
+      }
+      result = await Future.wait(futures);
+      for (QuerySnapshot<Map<String, dynamic>> querySnapshot in result) {
+        List<Song> newSongs = querySnapshot.docs
+            .map((song) => Song.fromDocument(song.data()))
+            .toList();
+        for (Song s in newSongs) {
+          box.put(s.songId, s);
+        }
+        songs.addAll(newSongs);
+      }
+    }
+
+    return some(songs);
   }
 }

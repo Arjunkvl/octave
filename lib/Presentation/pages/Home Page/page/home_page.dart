@@ -1,23 +1,19 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/page/audio_upload_page.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/bloc/HomePageBloc/home_page_bloc.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/bloc/Recent%20Songs%20Cubit/recent_songs_cubit.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/category%20Cubit/category_cubit.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/cubit/top_tile_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/helpers/sliver_for_sticky_top.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/helpers/variables.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/widgets/body_list_view.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/recent_widget_at_top.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/top_tile.dart';
 import 'package:marshal/Presentation/pages/Select%20Page/select_page.dart';
 
@@ -32,14 +28,15 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     context.read<GreetingsCubit>().setGreeting();
-    context.read<RecentSongsCubit>().getRecentSongs();
-    context.read<HomePageBloc>().add(GetRequiredData(lastSong: ''));
+    // context.read<RecentSongsCubit>().getRecentSongs();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    context.read<TopTileCubit>().getSongsForTile();
+    context.read<CategoryCubit>().fetchCategories();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -121,14 +118,42 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  SliverGrid.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisSpacing: 8.w,
-                        crossAxisSpacing: 8.w,
-                        childAspectRatio: 4.15,
-                        crossAxisCount: 2),
-                    itemCount: 6,
-                    itemBuilder: (context, index) => const RecentWidgetAtTop(),
+                  BlocBuilder<TopTileCubit, TopTileState>(
+                    builder: (context, state) {
+                      if (state is TopTileLoading) {
+                        return SliverGrid.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisSpacing: 8.w,
+                                  crossAxisSpacing: 8.w,
+                                  childAspectRatio: 4.15,
+                                  crossAxisCount: 2),
+                          itemCount: 6,
+                          itemBuilder: (context, index) => Container(
+                            width: 166.w,
+                            height: 40.h,
+                            decoration: const BoxDecoration(color: Colors.grey),
+                          ),
+                        );
+                      }
+                      if (state is TopTileLoaded) {
+                        return SliverGrid.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisSpacing: 8.w,
+                                  crossAxisSpacing: 8.w,
+                                  childAspectRatio: 4.15,
+                                  crossAxisCount: 2),
+                          itemCount: 6,
+                          itemBuilder: (context, index) => RecentWidgetAtTop(
+                            song: state.songs[index],
+                          ),
+                        );
+                      } else {
+                        return const SliverToBoxAdapter(
+                            child: SizedBox.shrink());
+                      }
+                    },
                   ),
                   SliverToBoxAdapter(
                     child: SizedBox(
@@ -138,19 +163,24 @@ class _HomePageState extends State<HomePage> {
                   SliverToBoxAdapter(
                     child: Column(
                       children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: 0,
-                          itemBuilder: (context, index) => Container(
-                              height: 200,
-                              child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    Text('data'),
-                                    Text('data'),
-                                    Text('data'),
-                                  ])),
+                        BlocBuilder<CategoryCubit, CategoryState>(
+                          builder: (context, state) {
+                            if (state is CategoryLoaded) {
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: state.category.length,
+                                itemBuilder: (context, index) => SizedBox(
+                                    height: 200.h,
+                                    child: BodyListView(
+                                      songIds: state.category[index].songIds,
+                                      categoryName: state.category[index].name,
+                                    )),
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
                         ),
                       ],
                     ),

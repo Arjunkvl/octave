@@ -1,11 +1,9 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/helpers/variables.dart';
+import 'package:marshal/data/models/Category%20model/category_model.dart';
 import 'package:marshal/data/models/song_model.dart';
 import 'package:marshal/domain/repository/repository.dart';
 import 'package:marshal/domain/repository/shared_song_repo.dart';
@@ -13,60 +11,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SongRepoImpl implements SongRepo {
   @override
-  Future<Option<List<Song>>> getNewReleseas({String lastSong = ''}) async {
-    final db = FirebaseFirestore.instance;
-    Box<Song> dbNewrealeselist = await Hive.openBox<Song>('newReleaseList');
-    // await dbNewrealeselist.clear();
-    final query =
-        db.collection('songs').orderBy('songId', descending: true).limit(5);
-
-    lastFecthedId = lastSong;
-    if (dbNewrealeselist.isNotEmpty) {
-      log(lastSong);
-      if (lastSong == '' && lastFecthedId == '') {
-        return some(dbNewrealeselist.values
-            .toList()
-            .getRange(
-                0,
-                dbNewrealeselist.values.length < 5
-                    ? dbNewrealeselist.values.length
-                    : 5)
-            .toList());
-      } else {
-        final List<Song> list = dbNewrealeselist.values.toList();
-        final int index = list.indexWhere((song) => song.songId == lastSong);
-        final int lenght = dbNewrealeselist.values.length;
-        log(lenght.toString());
-        final int remaining = lenght - (index + 1);
-        final bool hasMore = remaining >= 1;
-
-        if (hasMore) {
-          return some(dbNewrealeselist.values
-              .toList()
-              .getRange(
-                  index + 1, remaining >= 5 ? index + 6 : index + remaining + 1)
-              .toList());
-        } else {
-          log(lastSong);
-          final querySongs = await query.startAfter([lastSong]).get();
-          List<Song> songs = querySongs.docs
-              .map((song) => Song.fromDocument(song.data()))
-              .toList();
-          await dbNewrealeselist.addAll(songs);
-          log('just after adding${dbNewrealeselist.values.length}');
-          await dbNewrealeselist.close();
-          return some(songs);
-        }
-      }
+  Future<Option<List<Category>>> getCategories({String lastSong = ''}) async {
+    final categoryDocs = await FirebaseFirestore.instance
+        .collection('categories')
+        .orderBy('rank', descending: true)
+        .get();
+    final List<Category> categoryList = categoryDocs.docs.map((category) {
+      return Category.fromDocument(category.data());
+    }).toList();
+    if (categoryList.isNotEmpty) {
+      return some(categoryList);
     } else {
-      final querySongs = await query.get();
-      log(querySongs.docs.length.toString());
-      List<Song> songs = querySongs.docs
-          .map((song) => Song.fromDocument(song.data()))
-          .toList();
-      await dbNewrealeselist.addAll(songs);
-      await dbNewrealeselist.close();
-      return some(songs);
+      return none();
     }
   }
 

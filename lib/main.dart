@@ -11,8 +11,8 @@ import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/bloc/audio_uplo
 import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/auth_check_page.dart';
 import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/cubit/auth_status_checking_cubit.dart';
 import 'package:marshal/Presentation/pages/Auth/bloc/auth_bloc.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/bloc/HomePageBloc/home_page_bloc.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/bloc/Recent%20Songs%20Cubit/recent_songs_cubit.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/category%20Cubit/category_cubit.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/cubit/top_tile_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
@@ -27,6 +27,7 @@ void main(List<String> args) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   await Hive.initFlutter();
   Hive.registerAdapter(SongAdapter());
 
@@ -57,16 +58,16 @@ class Marshal extends StatelessWidget {
             create: (context) => GreetingsCubit(),
           ),
           BlocProvider(
-            create: (context) => RecentSongsCubit(),
+            create: (context) => TopTileCubit(),
+          ),
+          BlocProvider(
+            create: (context) => CategoryCubit(),
           ),
           BlocProvider(
             create: (context) => locator<AuthStatusCheckingCubit>(),
           ),
           BlocProvider(
             create: (context) => locator<PlayingPageBloc>(),
-          ),
-          BlocProvider(
-            create: (context) => locator<HomePageBloc>(),
           ),
           BlocProvider(
             create: (context) => AudioUploadBloc(),

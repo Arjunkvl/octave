@@ -24,7 +24,7 @@ class SongListViewTile extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            goToPlayingPage(context, song: song, url: coverUrl, index: index);
+            goToPlayingPage(context, song: song);
           },
           child: Container(
             width: 120.w,

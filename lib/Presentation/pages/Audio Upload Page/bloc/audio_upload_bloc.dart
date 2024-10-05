@@ -27,7 +27,7 @@ class AudioUploadBloc extends Bloc<AudioUploadEvent, AudioUploadState> {
       });
     });
     on<UploadAudioEvent>((event, emit) async {
-      // String songId = DateTime.now().microsecondsSinceEpoch.toString();
+      emit(Uploading());
       String songId = FirebaseFirestore.instance.collection('songs').doc().id;
       UploadTask uploadTask = await locator<UploadAudio>()
           .call(audioFile: event.audioFile, songId: songId, tag: event.tag);

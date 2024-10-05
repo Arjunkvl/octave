@@ -39,3 +39,11 @@ class UploadToRecentSongs {
     await repository.uploadToRecentSongs(songId: songId);
   }
 }
+
+class GetSongFromSongIds {
+  final AudioManageImpl repository;
+  GetSongFromSongIds({required this.repository});
+  Future<Option<List<Song>>> call({required List songIds}) async {
+    return await repository.getSongFromSongIds(songIds: songIds);
+  }
+}

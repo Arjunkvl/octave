@@ -49,7 +49,6 @@ class Song extends Equatable {
   factory Song.fromDocument(Map<String, dynamic> doc) {
     return Song(
       artist: doc['artist'] ?? '', // Provide default value if key is missing
-
       songId: doc['songId'] ?? '',
       songUrl: doc['songUrl'] ?? '',
       title: doc['title'] ?? '',
@@ -64,7 +63,7 @@ class Song extends Equatable {
 
   Map<String, dynamic> toMap() {
     return {
-      'author': artist,
+      'artist': artist,
       'songId': songId,
       'songUrl': songUrl,
       'coverUrl': coverUrl,

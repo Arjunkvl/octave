@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,14 +13,11 @@ import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifie
 import 'package:marshal/data/models/song_model.dart';
 
 class PlayingPage extends StatefulWidget {
-  final String url;
   final Song song;
-  final int index;
+
   const PlayingPage({
     super.key,
-    required this.url,
     required this.song,
-    required this.index,
   });
 
   @override
@@ -31,17 +30,18 @@ class _PlayingPageState extends State<PlayingPage>
   void initState() {
     super.initState();
     context.read<PlayingPageBloc>().add(
-          LoadSongEvent(song: widget.song, index: widget.index),
+          LoadSongEvent(song: widget.song),
         );
   }
 
   @override
   Widget build(BuildContext context) {
+    log(widget.song.artist);
     return Scaffold(
       body: Stack(
         children: [
           FutureBuilder(
-              future: setDynamicColor(NetworkImage(widget.url)),
+              future: setDynamicColor(NetworkImage(widget.song.coverUrl)),
               builder: (context, snapshots) {
                 if (snapshots.hasData) {
                   return Container(
@@ -102,7 +102,8 @@ class _PlayingPageState extends State<PlayingPage>
                       height: 310.w,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: CachedNetworkImageProvider(widget.url),
+                          image:
+                              CachedNetworkImageProvider(widget.song.coverUrl),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -173,8 +174,9 @@ class _PlayingPageState extends State<PlayingPage>
                           children: [
                             GestureDetector(
                                 onTap: () {
-                                  context.read<PlayingPageBloc>().add(
-                                      SkipPreviousEvent(index: widget.index));
+                                  context
+                                      .read<PlayingPageBloc>()
+                                      .add(SkipPreviousEvent());
                                 },
                                 child: SvgPicture.asset(AppIcons.skipPrevious)),
                             Container(
@@ -222,7 +224,7 @@ class _PlayingPageState extends State<PlayingPage>
                                 onTap: () {
                                   context
                                       .read<PlayingPageBloc>()
-                                      .add(SkipNextEvent(index: widget.index));
+                                      .add(SkipNextEvent());
                                 },
                                 child: SvgPicture.asset(AppIcons.skipNext)),
                           ],

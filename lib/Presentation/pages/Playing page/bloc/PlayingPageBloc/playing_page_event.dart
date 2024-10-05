@@ -8,10 +8,9 @@ abstract class PlayingPageEvent extends Equatable {
 }
 
 class LoadSongEvent extends PlayingPageEvent {
-  final int index;
   final Song song;
 
-  LoadSongEvent({required this.index, required this.song});
+  LoadSongEvent({required this.song});
   @override
   List<Object> get props => [song];
 }
@@ -27,19 +26,11 @@ class PlaySongEvent extends PlayingPageEvent {
 }
 
 class SkipNextEvent extends PlayingPageEvent {
-  final int index;
-
-  SkipNextEvent({required this.index});
-
   @override
   List<Object> get props => [];
 }
 
 class SkipPreviousEvent extends PlayingPageEvent {
-  final int index;
-
-  SkipPreviousEvent({required this.index});
-
   @override
   List<Object> get props => [];
 }
