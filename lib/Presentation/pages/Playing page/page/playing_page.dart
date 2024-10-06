@@ -97,7 +97,9 @@ class _PlayingPageState extends State<PlayingPage>
                                   : widget.song.title,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
-                            SvgPicture.asset(AppIcons.fav),
+                            Visibility(
+                                visible: false,
+                                child: SvgPicture.asset(AppIcons.fav)),
                           ],
                         ),
                         SizedBox(

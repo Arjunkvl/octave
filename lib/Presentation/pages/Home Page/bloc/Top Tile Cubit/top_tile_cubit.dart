@@ -9,9 +9,10 @@ class TopTileCubit extends Cubit<TopTileState> {
   TopTileCubit() : super(TopTileInitial());
   Future<void> getSongsForTile() async {
     final Box<Song> box = await Hive.openBox('songsBox');
-    if (box.values.length >= 6) {
+    final int length = box.values.length;
+    if (length >= 6) {
       emit(TopTileLoading());
-      final List<Song> songs = box.values.take(6).toList();
+      final List<Song> songs = box.values.toList().sublist(length - 6, length);
       emit(TopTileLoaded(songs: songs));
     }
   }

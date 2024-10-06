@@ -12,7 +12,8 @@ import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/auth_check_page.da
 import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/cubit/auth_status_checking_cubit.dart';
 import 'package:marshal/Presentation/pages/Auth/bloc/auth_bloc.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/category%20Cubit/category_cubit.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/bloc/cubit/top_tile_cubit.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/Top%20Tile%20Cubit/top_tile_cubit.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/cubit/all_songs_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
@@ -58,6 +59,9 @@ class Marshal extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) => GreetingsCubit(),
+          ),
+          BlocProvider(
+            create: (context) => AllSongsCubit(),
           ),
           BlocProvider(
             create: (context) => TopTileCubit(),

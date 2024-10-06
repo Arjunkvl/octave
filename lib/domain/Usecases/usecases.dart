@@ -42,3 +42,12 @@ class AddSongstoPlayList {
         songs: songs, sharedSongRepo: sharedSongRepo);
   }
 }
+
+class GetAllSongsWithPagination {
+  final SongRepoImpl repository;
+
+  GetAllSongsWithPagination({required this.repository});
+  Future<Option<List<Song>>> call() async {
+    return await repository.getAllSongsWithPagination();
+  }
+}

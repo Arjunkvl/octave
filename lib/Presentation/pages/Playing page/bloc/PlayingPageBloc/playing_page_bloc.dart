@@ -42,8 +42,10 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       },
     );
     on<AddSongsEvent>((event, emit) async {
-      final Box<Song> box = await Hive.openBox('currentlyPlayingSongs');
-      sharedSongRepo.currentlyPlayingSongList.addAll(box.values.toList());
+      final Box<Song> box = await Hive.openBox('songsBox');
+      final List<Song> randomList = box.values.toList();
+      randomList.shuffle();
+      sharedSongRepo.currentlyPlayingSongList.addAll(randomList.take(10));
 
       final List<AudioSource> sources = await locator<AddSongstoPlayList>()
           .call(
@@ -59,8 +61,10 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
     on<LoadSongEvent>((event, emit) async {
       log(player.currentIndex.toString());
       if (!sharedSongRepo.currentlyPlayingSongList.contains(event.song)) {
-        final Box<Song> box = await Hive.openBox('currentlyPlayingSongs');
-        await box.add(event.song);
+        final Box<Song> box = await Hive.openBox('songsBox');
+        if (!box.values.contains(event.song)) {
+          await box.add(event.song);
+        }
         sharedSongRepo.currentlyPlayingSongList.add(event.song);
         await player.pause();
         await playList.addAll(await locator<AddSongstoPlayList>()

@@ -35,7 +35,10 @@ class _SignInPageState extends State<SignInPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(AppIcons.appIcon),
+            SvgPicture.asset(
+              AppIcons.appIcon,
+              width: 40.w,
+            ),
             const SizedBox(
               height: 45,
             ),

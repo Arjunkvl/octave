@@ -36,6 +36,8 @@ void setUpLocator() {
   //     GenerateSongUrls(repository: repository));
   locator.registerSingleton<AddSongstoPlayList>(
       AddSongstoPlayList(repository: repository));
+  locator.registerSingleton<GetAllSongsWithPagination>(
+      GetAllSongsWithPagination(repository: repository));
 
   locator
       .registerSingleton<GetUserSignedUp>(GetUserSignedUp(authRepo: authRepo));

@@ -7,13 +7,10 @@ import 'package:marshal/data/models/song_model.dart';
 
 class SongListViewTile extends StatelessWidget {
   final Song song;
-  final int index;
-  final String coverUrl;
+
   const SongListViewTile({
     super.key,
     required this.song,
-    required this.index,
-    required this.coverUrl,
   });
 
   @override
@@ -31,7 +28,7 @@ class SongListViewTile extends StatelessWidget {
             height: 120.w,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: CachedNetworkImageProvider(coverUrl),
+                image: CachedNetworkImageProvider(song.coverUrl),
                 fit: BoxFit.cover,
               ),
             ),

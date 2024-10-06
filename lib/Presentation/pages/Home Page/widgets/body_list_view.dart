@@ -83,8 +83,6 @@ class BodyListView extends StatelessWidget {
                       ),
                       itemBuilder: (context, index) => SongListViewTile(
                         song: state.songs[index],
-                        index: index,
-                        coverUrl: state.songs[index].coverUrl,
                       ),
                     ),
                   );

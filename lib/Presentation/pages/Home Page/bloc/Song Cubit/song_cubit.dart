@@ -7,10 +7,8 @@ import 'package:marshal/domain/Usecases/audio%20manage%20usecases/audio_usecases
 part 'song_state.dart';
 
 class SongCubit extends Cubit<SongState> {
-  SongCubit() : super(SongInitial());
+  SongCubit() : super(SongLoading());
   Future<void> fetchSongs({required List songIds}) async {
-    emit(SongLoading());
-
     final result = await locator<GetSongFromSongIds>().call(songIds: songIds);
     result.fold(() {
       emit(SongError());

@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:marshal/data/helping_var.dart';
 import 'package:marshal/data/models/Category%20model/category_model.dart';
 import 'package:marshal/data/models/song_model.dart';
 import 'package:marshal/domain/repository/repository.dart';
@@ -97,5 +98,21 @@ class SongRepoImpl implements SongRepo {
 
       return some(songs);
     }
+  }
+
+  @override
+  Future<Option<List<Song>>> getAllSongsWithPagination() async {
+    List<Song> songs = [];
+    final db = FirebaseFirestore.instance;
+    final query = db.collection('songs').orderBy('uploadedAt').limit(9);
+    if (lastDoc == null) {
+      final result = await query.get();
+
+      songs.addAll(result.docs.map((song) => Song.fromDocument(song.data())));
+    } else {
+      final result = await query.startAfterDocument(lastDoc!).get();
+      songs.addAll(result.docs.map((song) => Song.fromDocument(song.data())));
+    }
+    return some(songs);
   }
 }
