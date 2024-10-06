@@ -27,21 +27,21 @@ class SongRepoImpl implements SongRepo {
   }
 
   @override
-  AudioSource addSongstoPlayList(
-      {required String url,
-      required String coverUrl,
-      required Song song,
-      required SharedSongRepo sharedSongRepo}) {
-    sharedSongRepo.currentlyPlayingSongList.add(song);
+  Future<List<AudioSource>> addSongstoPlayList(
+      {required List<Song> songs,
+      required SharedSongRepo sharedSongRepo}) async {
+    // sharedSongRepo.currentlyPlayingSongList.addAll(songs);
 
-    AudioSource sourceses = LockCachingAudioSource(
-      Uri.parse(url),
-      tag: MediaItem(
-        id: '0',
-        title: song.title,
-        artUri: Uri.parse(song.coverUrl),
-      ),
-    );
+    List<AudioSource> sourceses = List.generate(
+        songs.length,
+        (index) => LockCachingAudioSource(
+              Uri.parse(songs[index].songUrl),
+              tag: MediaItem(
+                id: '0',
+                title: songs[index].title,
+                artUri: Uri.parse(songs[index].coverUrl),
+              ),
+            ));
 
     return sourceses;
   }

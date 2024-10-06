@@ -35,15 +35,10 @@ class AddSongstoPlayList {
   final SongRepoImpl repository;
 
   AddSongstoPlayList({required this.repository});
-  AudioSource call(
-      {required String url,
-      required String coverUrl,
-      required Song song,
-      required SharedSongRepo sharedSongRepo}) {
-    return repository.addSongstoPlayList(
-        url: url,
-        coverUrl: coverUrl,
-        song: song,
-        sharedSongRepo: sharedSongRepo);
+  Future<List<AudioSource>> call(
+      {required List<Song> songs,
+      required SharedSongRepo sharedSongRepo}) async {
+    return await repository.addSongstoPlayList(
+        songs: songs, sharedSongRepo: sharedSongRepo);
   }
 }

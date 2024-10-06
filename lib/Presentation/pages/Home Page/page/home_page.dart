@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -81,11 +80,7 @@ class _HomePageState extends State<HomePage> {
                         onTap: () {
                           goToSelectPage(context);
                         },
-                        child: GestureDetector(
-                            onTap: () async {
-                              await FirebaseAuth.instance.signOut();
-                            },
-                            child: SvgPicture.asset(AppIcons.searchIcon)),
+                        child: SvgPicture.asset(AppIcons.searchIcon),
                       ),
                       SizedBox(
                         width: 20.w,

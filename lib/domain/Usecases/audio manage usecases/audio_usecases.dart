@@ -17,18 +17,25 @@ class ExtractAudioMetadata {
 class UploadAudio {
   final AudioManageImpl repository;
   UploadAudio({required this.repository});
-  Future<UploadTask> call(
-      {required File audioFile, required songId, required ID3Tag tag}) async {
+  Future<Option<UploadTask>> call(
+      {required File audioFile,
+      required songId,
+      required ID3Tag tag,
+      required String fileHash}) async {
     return await repository.uploadAudio(
-        audioFile: audioFile, songId: songId, tag: tag);
+        audioFile: audioFile, songId: songId, tag: tag, fileHash: fileHash);
   }
 }
 
 class UploadEssentials {
   final AudioManageImpl repository;
   UploadEssentials({required this.repository});
-  Future<void> call({required String songId, required ID3Tag tag}) async {
-    await repository.uploadEssentials(songId: songId, tag: tag);
+  Future<void> call(
+      {required String songId,
+      required ID3Tag tag,
+      required String fileHash}) async {
+    await repository.uploadEssentials(
+        songId: songId, tag: tag, fileHash: fileHash);
   }
 }
 
@@ -45,5 +52,13 @@ class GetSongFromSongIds {
   GetSongFromSongIds({required this.repository});
   Future<Option<List<Song>>> call({required List songIds}) async {
     return await repository.getSongFromSongIds(songIds: songIds);
+  }
+}
+
+class GenerateFileHash {
+  final AudioManageImpl repository;
+  GenerateFileHash({required this.repository});
+  Future<String> call({required File file}) async {
+    return await repository.generateFileHash(file: file);
   }
 }

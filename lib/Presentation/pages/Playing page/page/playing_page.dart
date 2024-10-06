@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:marshal/Presentation/core/dynamic%20Ui/dynamic_color.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
 import 'package:marshal/data/models/song_model.dart';
@@ -36,34 +33,14 @@ class _PlayingPageState extends State<PlayingPage>
 
   @override
   Widget build(BuildContext context) {
-    log(widget.song.artist);
     return Scaffold(
       body: Stack(
         children: [
-          FutureBuilder(
-              future: setDynamicColor(NetworkImage(widget.song.coverUrl)),
-              builder: (context, snapshots) {
-                if (snapshots.hasData) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          snapshots.data!.dominantColor!.color,
-                          Colors.black
-                        ],
-                      ),
-                    ),
-                  );
-                } else {
-                  return Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                    ),
-                  );
-                }
-              }),
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.black,
+            ),
+          ),
           Column(
             children: [
               Padding(

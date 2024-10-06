@@ -23,8 +23,8 @@ class SongListViewTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: () {
-            goToPlayingPage(context, song: song);
+          onTap: () async {
+            await goToPlayingPage(context, song: song);
           },
           child: Container(
             width: 120.w,
@@ -48,10 +48,10 @@ class SongListViewTile extends StatelessWidget {
           width: 120.w,
           child: Text(
             song.artist,
-            maxLines: 2,
             softWrap: true,
             style: Theme.of(context).textTheme.displayMedium,
             textAlign: TextAlign.start,
+            overflow: TextOverflow.ellipsis,
           ),
         )
       ],

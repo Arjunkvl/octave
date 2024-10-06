@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:dartz/dartz.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -27,20 +29,32 @@ class AudioManageImpl implements AudioManageRepo {
   }
 
   @override
-  Future<UploadTask> uploadAudio(
+  Future<Option<UploadTask>> uploadAudio(
       {required File audioFile,
       required String songId,
-      required ID3Tag tag}) async {
+      required ID3Tag tag,
+      required String fileHash}) async {
     final storageRef = FirebaseStorage.instance.ref();
-    final uploadTask = storageRef
-        .child("songs/$songId.mp3")
-        .putFile(audioFile, SettableMetadata(contentType: 'audio/mpeg'));
-    return uploadTask;
+    final contains = await FirebaseFirestore.instance
+        .collection('songs')
+        .where('fileHash', isEqualTo: fileHash)
+        .get();
+    if (contains.docs.isEmpty) {
+      log(contains.docs.toString());
+      log('hash not found');
+      final uploadTask = storageRef
+          .child("songs/$songId.mp3")
+          .putFile(audioFile, SettableMetadata(contentType: 'audio/mpeg'));
+      return some(uploadTask);
+    }
+    return none();
   }
 
   @override
   Future<void> uploadEssentials(
-      {required String songId, required ID3Tag tag}) async {
+      {required String songId,
+      required ID3Tag tag,
+      required String fileHash}) async {
     final Reference storageRef = FirebaseStorage.instance.ref();
     final FirebaseFirestore db = FirebaseFirestore.instance;
     final store = await SharedPreferences.getInstance();
@@ -67,6 +81,7 @@ class AudioManageImpl implements AudioManageRepo {
       songUrl: await getSongUrl(songId),
       title: tag.title ?? '',
       coverUrl: await getCoverUrl(songId),
+      fileHash: fileHash,
     );
     box.put(songSkelton.songId, songSkelton);
     await db.collection('songs').doc(songId).set(songSkelton.toMap());
@@ -135,5 +150,12 @@ class AudioManageImpl implements AudioManageRepo {
     }
 
     return some(songs);
+  }
+
+  @override
+  Future<String> generateFileHash({required File file}) async {
+    final Uint8List bytes = await file.readAsBytes();
+    final Digest digest = md5.convert(bytes);
+    return digest.toString();
   }
 }

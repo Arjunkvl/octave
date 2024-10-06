@@ -22,6 +22,7 @@ import 'package:path_provider/path_provider.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+
   HydratedBloc.storage = await HydratedStorage.build(
       storageDirectory: await getApplicationDocumentsDirectory());
   await Firebase.initializeApp(
@@ -30,7 +31,8 @@ void main(List<String> args) async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(SongAdapter());
-
+  // final Box<Song> s = await Hive.openBox('currentlyPlayingSongs');
+  // await s.clear();
   setUpLocator();
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
@@ -67,7 +69,9 @@ class Marshal extends StatelessWidget {
             create: (context) => locator<AuthStatusCheckingCubit>(),
           ),
           BlocProvider(
-            create: (context) => locator<PlayingPageBloc>(),
+            lazy: false,
+            create: (context) =>
+                locator<PlayingPageBloc>()..add(AddSongsEvent()),
           ),
           BlocProvider(
             create: (context) => AudioUploadBloc(),

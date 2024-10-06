@@ -23,13 +23,14 @@ class SongAdapter extends TypeAdapter<Song> {
       songUrl: fields[2] as String,
       title: fields[3] as String,
       coverUrl: fields[4] as String,
+      fileHash: fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Song obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.artist)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class SongAdapter extends TypeAdapter<Song> {
       ..writeByte(4)
       ..write(obj.coverUrl)
       ..writeByte(5)
-      ..write(obj.uploadedAt);
+      ..write(obj.uploadedAt)
+      ..writeByte(6)
+      ..write(obj.fileHash);
   }
 
   @override

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
 import 'package:marshal/application/dependency_injection.dart';
@@ -16,9 +19,8 @@ part 'playing_page_state.dart';
 class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
   final repository = SongRepoImpl();
   final SharedSongRepo sharedSongRepo;
-
+  List<Song> currentlyPlayingSongs = [];
   final player = AudioPlayer();
-
   PlayingPageBloc({required this.sharedSongRepo})
       : super(PlayingPageInitial()) {
     player.setLoopMode(LoopMode.all);
@@ -39,18 +41,30 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
         isPlaying.value = event;
       },
     );
+    on<AddSongsEvent>((event, emit) async {
+      final Box<Song> box = await Hive.openBox('currentlyPlayingSongs');
+      sharedSongRepo.currentlyPlayingSongList.addAll(box.values.toList());
 
-    on<LoadSongEvent>((event, emit) async {
+      final List<AudioSource> sources = await locator<AddSongstoPlayList>()
+          .call(
+              songs: sharedSongRepo.currentlyPlayingSongList,
+              sharedSongRepo: sharedSongRepo);
+
+      await playList.addAll(sources);
       if (player.currentIndex == null) {
         player.setPreferredPeakBitRate(100);
         player.setAudioSource(playList);
       }
+    });
+    on<LoadSongEvent>((event, emit) async {
+      log(player.currentIndex.toString());
       if (!sharedSongRepo.currentlyPlayingSongList.contains(event.song)) {
-        await playList.add(locator<AddSongstoPlayList>().call(
-            url: event.song.songUrl,
-            coverUrl: event.song.coverUrl,
-            song: event.song,
-            sharedSongRepo: sharedSongRepo));
+        final Box<Song> box = await Hive.openBox('currentlyPlayingSongs');
+        await box.add(event.song);
+        sharedSongRepo.currentlyPlayingSongList.add(event.song);
+        await player.pause();
+        await playList.addAll(await locator<AddSongstoPlayList>()
+            .call(songs: [event.song], sharedSongRepo: sharedSongRepo));
         await player.seek(Duration.zero,
             index: sharedSongRepo.currentlyPlayingSongList.indexOf(event.song));
         await locator<UploadToRecentSongs>().call(songId: event.song.songId);
@@ -59,11 +73,12 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
 
       if (sharedSongRepo.currentlyPlayingSongList[player.currentIndex!] !=
           event.song) {
+        await player.pause();
         await player.seek(Duration.zero,
             index: sharedSongRepo.currentlyPlayingSongList.indexOf(event.song));
-        if (!player.playing) {
-          await player.play();
-        }
+        await player.play();
+      } else {
+        await player.play();
       }
     });
     on<PlaySongEvent>((event, emit) async {

@@ -7,6 +7,8 @@ abstract class PlayingPageEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class AddSongsEvent extends PlayingPageEvent {}
+
 class LoadSongEvent extends PlayingPageEvent {
   final Song song;
 

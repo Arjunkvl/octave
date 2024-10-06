@@ -28,6 +28,8 @@ void setUpLocator() {
       .registerSingleton<GetCategories>(GetCategories(repository: repository));
   locator.registerSingleton<GetSongFromSongIds>(
       GetSongFromSongIds(repository: audioManageRepo));
+  locator.registerSingleton<GenerateFileHash>(
+      GenerateFileHash(repository: audioManageRepo));
   locator.registerSingleton<GetRecentSongs>(
       GetRecentSongs(repository: repository));
   // locator.registerSingleton<GenerateSongUrls>(

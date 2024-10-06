@@ -18,13 +18,16 @@ class Song extends Equatable {
   final String coverUrl;
   @HiveField(5)
   final DateTime uploadedAt;
+  @HiveField(6)
+  String fileHash;
   Song(
       {required this.uploadedAt,
       required this.artist,
       required this.songId,
       required this.songUrl,
       required this.title,
-      required this.coverUrl});
+      required this.coverUrl,
+      required this.fileHash});
 
   Song copyWith({
     String? artist,
@@ -34,6 +37,7 @@ class Song extends Equatable {
     String? title,
     String? coverUrl,
     DateTime? uploadedAt,
+    String? fileHash,
   }) {
     return Song(
       artist: artist ?? this.artist,
@@ -42,6 +46,7 @@ class Song extends Equatable {
       title: title ?? this.title,
       coverUrl: coverUrl ?? this.coverUrl,
       uploadedAt: uploadedAt ?? this.uploadedAt,
+      fileHash: fileHash ?? this.fileHash,
     );
   }
 
@@ -53,13 +58,13 @@ class Song extends Equatable {
       songUrl: doc['songUrl'] ?? '',
       title: doc['title'] ?? '',
       coverUrl: doc['coverUrl'] ?? '',
-      uploadedAt: doc['uploadedAt'].toDate() ??
-          '', // Provide default value if key is missing
+      uploadedAt: doc['uploadedAt'].toDate() ?? '',
+      fileHash: doc['fileHash'], // Provide default value if key is missing
     );
   }
   @override
   List<Object?> get props =>
-      [artist, songId, songUrl, title, coverUrl, uploadedAt];
+      [artist, songId, songUrl, title, coverUrl, uploadedAt, fileHash];
 
   Map<String, dynamic> toMap() {
     return {
@@ -69,6 +74,7 @@ class Song extends Equatable {
       'coverUrl': coverUrl,
       'title': title,
       'uploadedAt': uploadedAt,
+      'fileHash': fileHash,
     };
   }
 
@@ -79,6 +85,7 @@ class Song extends Equatable {
         songUrl: map['songUrl'],
         title: map['title'],
         coverUrl: map['coverUrl'],
-        uploadedAt: map['uploadedAt']);
+        uploadedAt: map['uploadedAt'],
+        fileHash: map['fileHash']);
   }
 }

@@ -29,15 +29,24 @@ class AudioUploadBloc extends Bloc<AudioUploadEvent, AudioUploadState> {
     on<UploadAudioEvent>((event, emit) async {
       emit(Uploading());
       String songId = FirebaseFirestore.instance.collection('songs').doc().id;
-      UploadTask uploadTask = await locator<UploadAudio>()
-          .call(audioFile: event.audioFile, songId: songId, tag: event.tag);
-      await for (final taskSnapshot in uploadTask.snapshotEvents) {
-        if (taskSnapshot.state == TaskState.success) {
-          await locator<UploadEssentials>()
-              .call(songId: songId, tag: event.tag);
-          emit(UploadCompletedState());
+      final String fileHash =
+          await locator<GenerateFileHash>().call(file: event.audioFile);
+      Option<UploadTask> result = await locator<UploadAudio>().call(
+          audioFile: event.audioFile,
+          songId: songId,
+          tag: event.tag,
+          fileHash: fileHash);
+      await result.fold(() async {
+        emit(UploadErrorState());
+      }, (uploadTask) async {
+        await for (final taskSnapshot in uploadTask.snapshotEvents) {
+          if (taskSnapshot.state == TaskState.success) {
+            await locator<UploadEssentials>()
+                .call(songId: songId, tag: event.tag, fileHash: fileHash);
+          }
         }
-      }
+        emit(UploadCompletedState());
+      });
     });
   }
 }

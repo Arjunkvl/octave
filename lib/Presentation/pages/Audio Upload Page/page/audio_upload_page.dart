@@ -52,6 +52,11 @@ class AudioUploadPage extends StatelessWidget {
               ),
             );
           }
+          if (state is UploadErrorState) {
+            return const Center(
+              child: Text('FileAlreadyUploaded!'),
+            );
+          }
           if (state is UploadeState) {
             return Center(
               child: Padding(

@@ -7,11 +7,8 @@ import 'package:marshal/domain/repository/shared_song_repo.dart';
 abstract class SongRepo {
   Future<Option<List<Category>>> getCategories({String lastSong = ''});
   Future<Option<List<Song>>> getRecentSongs({String lastSong = ''});
-  AudioSource addSongstoPlayList(
-      {required String url,
-      required String coverUrl,
-      required Song song,
-      required SharedSongRepo sharedSongRepo});
+  Future<List<AudioSource>> addSongstoPlayList(
+      {required List<Song> songs, required SharedSongRepo sharedSongRepo});
   // Future<Option> getSongs();
   // Future<void> getRecentSongs() async {}
   // Future<void> updateRecentSongs() async {}
