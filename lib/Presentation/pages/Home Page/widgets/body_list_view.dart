@@ -30,7 +30,7 @@ class BodyListView extends StatelessWidget {
             height: 15.h,
           ),
           SizedBox(
-            height: 150.h,
+            height: 160.h,
             child: BlocBuilder<SongCubit, SongState>(
               builder: (context, state) {
                 if (state is SongLoading) {

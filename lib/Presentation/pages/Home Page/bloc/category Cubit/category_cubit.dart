@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -12,11 +10,14 @@ part 'category_state.dart';
 class CategoryCubit extends Cubit<CategoryState> {
   CategoryCubit() : super(CategoryLoading());
   Future<void> fetchCategories() async {
+    List<Category> list = [];
     emit(CategoryLoading());
-    Option<List<Category>> result = await locator<GetCategories>().call();
-    result.fold(() => emit(CategoryErrorState()), (categorys) async {
-      log(categorys[0].name);
-      emit(CategoryLoaded(category: categorys));
-    });
+    if (list.isEmpty) {
+      Option<List<Category>> result = await locator<GetCategories>().call();
+      result.fold(() => emit(CategoryErrorState()), (categorys) async {
+        list = categorys;
+      });
+    }
+    emit(CategoryLoaded(category: list));
   }
 }

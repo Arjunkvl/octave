@@ -25,7 +25,10 @@ class AudioManageImpl implements AudioManageRepo {
     // final data = await File(audioFile.path).readAsBytes();
     final tags = ID3TagReader.path(audioFile.path);
     final ID3Tag metadata = await tags.readTag();
-    return some(metadata);
+    if (metadata.title != null) {
+      return some(metadata);
+    }
+    return none();
   }
 
   @override

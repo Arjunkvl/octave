@@ -11,10 +11,13 @@ import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/bloc/audio_uplo
 import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/auth_check_page.dart';
 import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/cubit/auth_status_checking_cubit.dart';
 import 'package:marshal/Presentation/pages/Auth/bloc/auth_bloc.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/category%20Cubit/category_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Top%20Tile%20Cubit/top_tile_cubit.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/bloc/cubit/all_songs_cubit.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/All%20Song/all_songs_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
+import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/bloc/Playing%20Page%20Components/playing_page_components_cubit.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
 import 'package:marshal/data/models/song_model.dart';
@@ -42,8 +45,8 @@ void main(List<String> args) async {
   );
 
   runApp(const Marshal());
-  SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.top]);
 }
 
 class Marshal extends StatelessWidget {
@@ -51,44 +54,58 @@ class Marshal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(360, 800),
-      splitScreenMode: true,
-      minTextAdapt: true,
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => GreetingsCubit(),
-          ),
-          BlocProvider(
-            create: (context) => AllSongsCubit(),
-          ),
-          BlocProvider(
-            create: (context) => TopTileCubit(),
-          ),
-          BlocProvider(
-            create: (context) => CategoryCubit(),
-          ),
-          BlocProvider(
-            create: (context) => locator<AuthStatusCheckingCubit>(),
-          ),
-          BlocProvider(
-            lazy: false,
-            create: (context) =>
-                locator<PlayingPageBloc>()..add(AddSongsEvent()),
-          ),
-          BlocProvider(
-            create: (context) => AudioUploadBloc(),
-          ),
-          BlocProvider(
-            create: (context) => AuthBloc(),
-          ),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.theme,
-          debugShowCheckedModeBanner: false,
-          home: const AuthCheckPage(),
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   ScreenUtilInit(
+
+    //   );
+    // });
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => GreetingsCubit(),
         ),
+        BlocProvider(
+          create: (context) => locator<PlayingPageComponentsCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => locator<PlayerControllerCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => PlaySongCubit(),
+        ),
+        BlocProvider(
+          create: (context) => AllSongsCubit(),
+        ),
+        BlocProvider(
+          create: (context) => TopTileCubit(),
+        ),
+        BlocProvider(
+          create: (context) => CategoryCubit(),
+        ),
+        BlocProvider(
+          create: (context) => locator<AuthStatusCheckingCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => locator<PlayingPageBloc>(),
+        ),
+        BlocProvider(
+          create: (context) => AudioUploadBloc(),
+        ),
+        BlocProvider(
+          create: (context) => AuthBloc(),
+        ),
+      ],
+      child: ScreenUtilInit(
+        designSize: const Size(360, 800),
+        splitScreenMode: true,
+        minTextAdapt: true,
+        builder: (context, _) {
+          return MaterialApp(
+            theme: AppTheme.theme,
+            debugShowCheckedModeBanner: false,
+            home: const AuthCheckPage(),
+          );
+        },
       ),
     );
   }

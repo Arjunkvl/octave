@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 
-import 'package:marshal/Presentation/pages/Home%20Page/helpers/navigation.dart';
+import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/data/models/song_model.dart';
 
 class SongListViewTile extends StatelessWidget {
@@ -21,7 +23,10 @@ class SongListViewTile extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () async {
-            await goToPlayingPage(context, song: song);
+            context.read<PlaySongCubit>().playSong(song: song);
+            context
+                .read<PlayerControllerCubit>()
+                .showPlayerController(song: song);
           },
           child: Container(
             width: 120.w,
@@ -37,9 +42,13 @@ class SongListViewTile extends StatelessWidget {
         SizedBox(
           height: 5.h,
         ),
-        Text(
-          song.title.length > 20 ? song.title.substring(0, 20) : song.title,
-          style: Theme.of(context).textTheme.bodySmall,
+        SizedBox(
+          width: 120.w,
+          child: Text(
+            song.title,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
         ),
         SizedBox(
           width: 120.w,

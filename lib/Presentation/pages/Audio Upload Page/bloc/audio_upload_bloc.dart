@@ -19,11 +19,12 @@ class AudioUploadBloc extends Bloc<AudioUploadEvent, AudioUploadState> {
           await locator<ExtractAudioMetadata>().call(event.audioFile);
       result.fold(() {
         (i) {
-          emit(AudioUploadInitial());
+          emit(UploadErrorState());
         };
       }, (tag) {
         // emit(UploadeState(tag: tag, isCompleted: false));
-        emit(UploadeState(isCompleted: false, tag: tag));
+        emit(UploadeState(
+            isCompleted: false, tag: tag, audioFile: event.audioFile));
       });
     });
     on<UploadAudioEvent>((event, emit) async {

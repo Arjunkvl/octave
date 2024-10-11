@@ -32,7 +32,7 @@ class SongRepoImpl implements SongRepo {
       {required List<Song> songs,
       required SharedSongRepo sharedSongRepo}) async {
     // sharedSongRepo.currentlyPlayingSongList.addAll(songs);
-
+    sharedSongRepo.currentlyPlayingSongList.addAll(songs);
     List<AudioSource> sourceses = List.generate(
         songs.length,
         (index) => LockCachingAudioSource(
@@ -102,16 +102,19 @@ class SongRepoImpl implements SongRepo {
 
   @override
   Future<Option<List<Song>>> getAllSongsWithPagination() async {
-    List<Song> songs = [];
     final db = FirebaseFirestore.instance;
-    final query = db.collection('songs').orderBy('uploadedAt').limit(9);
+    final query =
+        db.collection('songs').orderBy('uploadedAt', descending: true).limit(9);
     if (lastDoc == null) {
       final result = await query.get();
-
       songs.addAll(result.docs.map((song) => Song.fromDocument(song.data())));
+      lastDoc = result.docs.last;
     } else {
       final result = await query.startAfterDocument(lastDoc!).get();
-      songs.addAll(result.docs.map((song) => Song.fromDocument(song.data())));
+      if (result.docs.isNotEmpty) {
+        songs.addAll(result.docs.map((song) => Song.fromDocument(song.data())));
+        lastDoc = result.docs.last;
+      }
     }
     return some(songs);
   }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -11,12 +13,12 @@ part 'all_songs_state.dart';
 class AllSongsCubit extends Cubit<AllSongsState> {
   AllSongsCubit() : super(AllSongsInitial());
   Future<void> getAllSongs() async {
-    isAllSongFetching = false;
-    emit(AllSongLoading());
+    log('triggered');
     final Option<List<Song>> result =
         await locator<GetAllSongsWithPagination>().call();
     result.fold(() {}, (songs) {
-      emit(AllSongsLoaded(songs: songs));
+      emit(AllSongsLoaded(songs: List.from(songs)));
+      isfetching = false;
     });
   }
 }

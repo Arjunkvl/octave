@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
 import 'package:marshal/Presentation/pages/Auth/bloc/auth_bloc.dart';
+import 'package:marshal/Presentation/pages/Main%20Home%20Page/page/main_home_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -34,17 +34,6 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(
         leadingWidth: 32,
         backgroundColor: Colors.transparent,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 5.w),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: SvgPicture.asset(
-              AppIcons.backArrow,
-            ),
-          ),
-        ),
       ),
       resizeToAvoidBottomInset: true,
       body: Center(
@@ -52,7 +41,10 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(AppIcons.appIcon),
+              SvgPicture.asset(
+                AppIcons.appIcon,
+                width: 120.w,
+              ),
               const SizedBox(
                 height: 45,
               ),
@@ -155,7 +147,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         if (state is LogedInState) {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => const HomePage(),
+                              builder: (context) => MainHomePage(),
                             ),
                           );
                         }
