@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:hive/hive.dart';
@@ -38,6 +39,7 @@ class SongRepoImpl implements SongRepo {
         (index) => LockCachingAudioSource(
               Uri.parse(songs[index].songUrl),
               tag: MediaItem(
+                playable: false,
                 id: '0',
                 title: songs[index].title,
                 artUri: Uri.parse(songs[index].coverUrl),

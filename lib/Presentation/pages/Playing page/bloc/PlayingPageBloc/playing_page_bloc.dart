@@ -1,5 +1,5 @@
-import 'dart:developer' as l;
 import 'dart:math';
+import 'dart:developer' as dev;
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,20 +50,20 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       },
     );
     on<AddRandomSongEvent>((event, emit) async {
-      l.log('random song added');
       final Box<Song> box = await Hive.openBox('songsBox');
       final int index = Random().nextInt(box.length - 1);
       if (!sharedSongRepo.currentlyPlayingSongList
           .contains(box.values.toList()[index])) {
+        locator<PlayingPageComponentsCubit>()
+            .setComponents(song: box.values.toList()[index]);
         await playList.addAll(await locator<AddSongstoPlayList>().call(
             songs: [box.values.toList()[index]],
             sharedSongRepo: sharedSongRepo));
       }
-      await player.seekToNext();
-      locator<PlayingPageComponentsCubit>()
-          .setComponents(song: box.values.toList()[index]);
       locator<PlayerControllerCubit>()
           .showPlayerController(song: box.values.toList()[index]);
+      await player.seekToNext();
+      await player.play();
     });
     on<LoadSongEvent>((event, emit) async {
       locator<PlayingPageComponentsCubit>().setComponents(song: event.song);
@@ -103,7 +103,9 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       );
     });
     on<PauseSongEvent>((event, emit) async {
+      dev.log('current index:${player.currentIndex!}');
       await player.pause();
+      dev.log('current index:${player.currentIndex!}');
       emit(
         UpdatedPlayerBar(
           playerDetailsEntitiy: PlayerDetailsEntitiy(
@@ -114,7 +116,17 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
 
     //skip to Next Eveny adds new song to the playlist;
     on<SkipNextEvent>((event, emit) async {
-      add(AddRandomSongEvent(index: player.currentIndex!));
+      await player.pause();
+      if (!player.hasNext) {
+        add(AddRandomSongEvent(index: player.currentIndex!));
+        return;
+      }
+      await player.seekToNext();
+      locator<PlayingPageComponentsCubit>().setComponents(
+          song: sharedSongRepo.currentlyPlayingSongList[player.currentIndex!]);
+      locator<PlayerControllerCubit>().showPlayerController(
+          song: sharedSongRepo.currentlyPlayingSongList[player.currentIndex!]);
+      await player.play();
     });
     on<SkipPreviousEvent>((event, emit) async {
       await player.seekToPrevious();
