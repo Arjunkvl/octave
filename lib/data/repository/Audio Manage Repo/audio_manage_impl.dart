@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:developer';
+
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -43,8 +43,6 @@ class AudioManageImpl implements AudioManageRepo {
         .where('fileHash', isEqualTo: fileHash)
         .get();
     if (contains.docs.isEmpty) {
-      log(contains.docs.toString());
-      log('hash not found');
       final uploadTask = storageRef
           .child("songs/$songId.mp3")
           .putFile(audioFile, SettableMetadata(contentType: 'audio/mpeg'));

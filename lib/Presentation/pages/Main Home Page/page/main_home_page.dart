@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,9 +25,7 @@ class MainHomePage extends StatelessWidget {
               valueListenable: index, builder: (context, i, _) => _screens[i]),
           BlocBuilder<PlayerControllerCubit, PlayerControllerState>(
             builder: (context, state) {
-              log('gyguigulg');
               if (state is PlayerControllerActive) {
-                log('player active');
                 return PlayerController(
                   song: state.song,
                 );

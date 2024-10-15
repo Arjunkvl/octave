@@ -4,33 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:marshal/Presentation/pages/Playing%20page/bloc/Playing%20Page%20Components/playing_page_components_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/helpers/button_states.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/widget/progress_bar.dart';
 import 'package:marshal/data/models/song_model.dart';
 
-class PlayingPage extends StatefulWidget {
+class PlayingPage extends StatelessWidget {
   final Song song;
-
-  const PlayingPage({
-    super.key,
-    required this.song,
-  });
-
-  @override
-  State<PlayingPage> createState() => _PlayingPageState();
-}
-
-class _PlayingPageState extends State<PlayingPage>
-    with SingleTickerProviderStateMixin {
-  @override
-  void initState() {
-    super.initState();
-    context.read<PlayingPageBloc>().add(
-          LoadSongEvent(song: widget.song),
-        );
-  }
+  const PlayingPage({super.key, required this.song});
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +23,9 @@ class _PlayingPageState extends State<PlayingPage>
             color: Colors.black,
           ),
         ),
-        BlocBuilder<PlayingPageComponentsCubit, PlayingPageComponentsState>(
+        BlocBuilder<PlayingPageBloc, PlayingPageState>(
           builder: (context, state) {
-            if (state is SongComponentsState) {
+            if (state is PlayingState) {
               return Column(
                 children: [
                   Padding(
@@ -61,9 +43,13 @@ class _PlayingPageState extends State<PlayingPage>
                             width: 25,
                           ),
                         ),
-                        Text(
-                          'From ${state.song.artist}',
-                          style: Theme.of(context).textTheme.bodySmall,
+                        SizedBox(
+                          width: 200,
+                          child: Text(
+                            'From ${state.song.artist}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         SvgPicture.asset(AppIcons.threeDot),
                       ],
@@ -96,7 +82,7 @@ class _PlayingPageState extends State<PlayingPage>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                  width: 100,
+                                  width: 200,
                                   child: Text(
                                     state.song.title,
                                     overflow: TextOverflow.ellipsis,
@@ -112,48 +98,7 @@ class _PlayingPageState extends State<PlayingPage>
                             SizedBox(
                               height: 5.h,
                             ),
-                            BlocBuilder<PlayingPageBloc, PlayingPageState>(
-                              builder: (context, state) {
-                                if (state is UpdatedPlayerBar) {
-                                  return ProgressBar(
-                                    barHeight: 3,
-                                    thumbRadius: 7,
-                                    thumbGlowRadius: 10,
-                                    timeLabelTextStyle:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                    progressBarColor: Colors.white,
-                                    baseBarColor: const Color(0xff766E6E),
-                                    bufferedBarColor: Colors.transparent,
-                                    thumbColor: const Color(0xffffffff),
-                                    thumbGlowColor: const Color(0xDAFFFFFF),
-                                    progress:
-                                        state.playerDetailsEntitiy.progress,
-                                    total: state
-                                        .playerDetailsEntitiy.totalDuration,
-                                    onSeek: (value) {
-                                      context
-                                          .read<PlayingPageBloc>()
-                                          .add(SeekEvent(progress: value));
-                                    },
-                                  );
-                                } else {
-                                  return ProgressBar(
-                                    barHeight: 3,
-                                    thumbRadius: 7,
-                                    thumbGlowRadius: 10,
-                                    timeLabelTextStyle:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                    progressBarColor: Colors.white,
-                                    baseBarColor: const Color(0xff766E6E),
-                                    bufferedBarColor: Colors.transparent,
-                                    thumbColor: const Color(0xffffffff),
-                                    thumbGlowColor: const Color(0xDAFFFFFF),
-                                    progress: Duration.zero,
-                                    total: Duration.zero,
-                                  );
-                                }
-                              },
-                            ),
+                            SongProgresssBar(),
                             SizedBox(
                               height: 20.h,
                             ),
@@ -164,7 +109,7 @@ class _PlayingPageState extends State<PlayingPage>
                                     onTap: () {
                                       context
                                           .read<PlayingPageBloc>()
-                                          .add(SkipPreviousEvent());
+                                          .add(SkipToPrevious());
                                     },
                                     child: SvgPicture.asset(
                                         AppIcons.skipPrevious)),
@@ -179,32 +124,38 @@ class _PlayingPageState extends State<PlayingPage>
                                     child: IconButton(
                                       color: Colors.black,
                                       onPressed: () {
-                                        if (isPlaying.value) {
-                                          // Only dispatch PauseSongEvent if the song is currently playing
-
+                                        if (playButtonState.value ==
+                                            PlayButtonState.paused) {
                                           context
                                               .read<PlayingPageBloc>()
                                               .add(PauseSongEvent());
-                                          // Update state after dispatching
-                                          isPlaying.value = false;
-                                        } else {
-                                          // Only dispatch PlaySongEvent if the song is currently paused
+                                        }
+                                        if (playButtonState.value ==
+                                            PlayButtonState.playing) {
                                           context
                                               .read<PlayingPageBloc>()
                                               .add(PlaySongEvent());
-                                          // Update state after dispatching
-                                          isPlaying.value = true;
                                         }
                                       },
                                       icon: ValueListenableBuilder(
-                                          valueListenable: isPlaying,
+                                          valueListenable: playButtonState,
                                           builder: (context, value, _) {
-                                            return Icon(
-                                              size: 30,
-                                              value
-                                                  ? Icons.pause
-                                                  : Icons.play_arrow,
-                                            );
+                                            return switch (value) {
+                                              PlayButtonState.loading =>
+                                                const CircularProgressIndicator(
+                                                  color: Colors.black,
+                                                ),
+                                              PlayButtonState.playing => Icon(
+                                                  Icons.play_arrow,
+                                                  size: 30,
+                                                  color: Colors.black,
+                                                ),
+                                              PlayButtonState.paused => Icon(
+                                                  Icons.pause,
+                                                  size: 30,
+                                                  color: Colors.black,
+                                                ),
+                                            };
                                           }),
                                     ),
                                   ),
@@ -213,7 +164,7 @@ class _PlayingPageState extends State<PlayingPage>
                                     onTap: () {
                                       context
                                           .read<PlayingPageBloc>()
-                                          .add(SkipNextEvent());
+                                          .add(SkipToNextEvent());
                                     },
                                     child: SvgPicture.asset(AppIcons.skipNext)),
                               ],

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
 import 'package:marshal/data/models/song_model.dart';
 
 class SongListViewTile extends StatelessWidget {
@@ -24,6 +25,7 @@ class SongListViewTile extends StatelessWidget {
         GestureDetector(
           onTap: () async {
             context.read<PlaySongCubit>().playSong(song: song);
+            context.read<PlayingPageBloc>().add(AddSongEvent(song: song));
             context
                 .read<PlayerControllerCubit>()
                 .showPlayerController(song: song);

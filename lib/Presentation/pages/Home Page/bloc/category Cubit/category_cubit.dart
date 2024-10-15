@@ -9,15 +9,15 @@ part 'category_state.dart';
 
 class CategoryCubit extends Cubit<CategoryState> {
   CategoryCubit() : super(CategoryLoading());
+  List<Category> list = [];
   Future<void> fetchCategories() async {
-    List<Category> list = [];
-    emit(CategoryLoading());
     if (list.isEmpty) {
+      emit(CategoryLoading());
       Option<List<Category>> result = await locator<GetCategories>().call();
       result.fold(() => emit(CategoryErrorState()), (categorys) async {
         list = categorys;
       });
+      emit(CategoryLoaded(category: list));
     }
-    emit(CategoryLoaded(category: list));
   }
 }

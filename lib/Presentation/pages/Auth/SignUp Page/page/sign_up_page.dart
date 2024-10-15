@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -194,7 +192,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   void dispose() {
-    log('dispose');
     _email.dispose();
     _password.dispose();
     super.dispose();

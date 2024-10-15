@@ -1,11 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marshal/Presentation/Theme%20Data/theme_data.dart';
 import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/bloc/audio_upload_bloc.dart';
 import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/auth_check_page.dart';
@@ -17,7 +17,7 @@ import 'package:marshal/Presentation/pages/Home%20Page/bloc/Top%20Tile%20Cubit/t
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/All%20Song/all_songs_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
-import 'package:marshal/Presentation/pages/Playing%20page/bloc/Playing%20Page%20Components/playing_page_components_cubit.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/bloc/Progress%20Bar/progress_bar_cubit.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
 import 'package:marshal/data/models/song_model.dart';
@@ -38,11 +38,11 @@ void main(List<String> args) async {
   // final Box<Song> s = await Hive.openBox('currentlyPlayingSongs');
   // await s.clear();
   setUpLocator();
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
+  // await JustAudioBackground.init(
+  //   androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+  //   androidNotificationChannelName: 'Audio playback',
+  //   androidNotificationOngoing: true,
+  // );
 
   runApp(const Marshal());
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -65,7 +65,7 @@ class Marshal extends StatelessWidget {
           create: (context) => GreetingsCubit(),
         ),
         BlocProvider(
-          create: (context) => locator<PlayingPageComponentsCubit>(),
+          create: (context) => ProgressBarCubit()..listenToCurrentPosition(),
         ),
         BlocProvider(
           create: (context) => locator<PlayerControllerCubit>(),
@@ -83,7 +83,8 @@ class Marshal extends StatelessWidget {
           create: (context) => CategoryCubit(),
         ),
         BlocProvider(
-          create: (context) => locator<AuthStatusCheckingCubit>(),
+          create: (context) =>
+              AuthStatusCheckingCubit(SchedulerBinding.instance),
         ),
         BlocProvider(
           create: (context) => locator<PlayingPageBloc>(),

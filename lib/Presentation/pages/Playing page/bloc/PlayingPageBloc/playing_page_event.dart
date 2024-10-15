@@ -7,51 +7,33 @@ abstract class PlayingPageEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AddRandomSongEvent extends PlayingPageEvent {
-  final int index;
-  AddRandomSongEvent({required this.index});
-}
-
-class LoadSongEvent extends PlayingPageEvent {
+class AddSongEvent extends PlayingPageEvent {
   final Song song;
-
-  LoadSongEvent({required this.song});
+  AddSongEvent({required this.song});
   @override
   List<Object> get props => [song];
 }
 
-class PauseSongEvent extends PlayingPageEvent {
+class UpdatePlayingPageEvent extends PlayingPageEvent {
+  final Song song;
+  UpdatePlayingPageEvent({required this.song});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [song];
 }
 
-class PlaySongEvent extends PlayingPageEvent {
-  @override
-  List<Object> get props => [];
-}
+class AddNextSongEvent extends PlayingPageEvent {}
 
-class SkipNextEvent extends PlayingPageEvent {
-  @override
-  List<Object> get props => [];
-}
+class PlaySongEvent extends PlayingPageEvent {}
 
-class SkipPreviousEvent extends PlayingPageEvent {
-  @override
-  List<Object> get props => [];
-}
+class PauseSongEvent extends PlayingPageEvent {}
 
-class UpdatePlayerBarEvent extends PlayingPageEvent {
-  final Duration progress;
+class SkipToNextEvent extends PlayingPageEvent {}
 
-  UpdatePlayerBarEvent({required this.progress});
-  @override
-  List<Object> get props => [progress];
-}
+class SkipToPrevious extends PlayingPageEvent {}
 
 class SeekEvent extends PlayingPageEvent {
-  final Duration progress;
-
-  SeekEvent({required this.progress});
+  final Duration position;
+  SeekEvent({required this.position});
   @override
-  List<Object> get props => [progress];
+  List<Object> get props => [position];
 }

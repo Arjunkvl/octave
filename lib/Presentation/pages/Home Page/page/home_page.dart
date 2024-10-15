@@ -27,15 +27,14 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     context.read<GreetingsCubit>().setGreeting();
     context.read<AllSongsCubit>().getAllSongs();
-    // context.read<RecentSongsCubit>().getRecentSongs();
+    context.read<TopTileCubit>().getSongsForTile();
+    context.read<CategoryCubit>().fetchCategories();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    context.read<TopTileCubit>().getSongsForTile();
-    context.read<CategoryCubit>().fetchCategories();
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -206,7 +205,9 @@ class _HomePageState extends State<HomePage> {
                               isScrollControlled: true,
                               context: context,
                               builder: (context) {
-                                return PlayingPage(song: state.song);
+                                return PlayingPage(
+                                  song: state.song,
+                                );
                               });
                         }
                       },

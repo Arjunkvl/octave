@@ -21,3 +21,5 @@ class UploadAudioEvent extends AudioUploadEvent {
   @override
   List<Object> get props => [audioFile, tag];
 }
+
+class ShowInitialFaceEvent extends AudioUploadEvent {}

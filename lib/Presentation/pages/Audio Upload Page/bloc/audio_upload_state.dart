@@ -15,6 +15,8 @@ class Uploading extends AudioUploadState {}
 
 class UploadCompletedState extends AudioUploadState {}
 
+class MetaDataErrorState extends AudioUploadState {}
+
 class UploadeState extends AudioUploadState {
   final File audioFile;
   final ID3Tag tag;

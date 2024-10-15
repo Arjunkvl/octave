@@ -9,10 +9,9 @@ abstract class PlayingPageState extends Equatable {
 
 class PlayingPageInitial extends PlayingPageState {}
 
-class UpdatedPlayerBar extends PlayingPageState {
-  final PlayerDetailsEntitiy playerDetailsEntitiy;
-
-  UpdatedPlayerBar({required this.playerDetailsEntitiy});
+class PlayingState extends PlayingPageState {
+  final Song song;
+  PlayingState({required this.song});
   @override
-  List<Object> get props => [playerDetailsEntitiy];
+  List<Object> get props => [song];
 }

@@ -35,23 +35,64 @@ class AudioUploadPage extends StatelessWidget {
               child: Text('Choose File')),
         );
       }
-      if (state is UploadErrorState) {
-        return const Center(
-          child: Text("This File \nCan't be Uploaded"),
-        );
-      }
-      if (state is AudioUploadInitial) {
-        return const Center(
-          child: Text('Extracting'),
+      if (state is MetaDataErrorState) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Center(
+              child: Text("This File \nCan't be Uploaded"),
+            ),
+            ElevatedButton(
+                onPressed: () async {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
+                    type: FileType.audio,
+                    allowMultiple: false,
+                  );
+                  if (result != null) {
+                    final File audioFile = File(result.files.single.path!);
+                    if (context.mounted) {
+                      context
+                          .read<AudioUploadBloc>()
+                          .add(ExtractMetadataEvent(audioFile: audioFile));
+                    }
+                  }
+                },
+                child: Text('Choose File')),
+          ],
         );
       }
       if (state is UploadCompletedState) {
-        return Center(
-            child: Text(
-          'Upload Completed \nNow You Can Go Back',
-          style: Theme.of(context).textTheme.bodyLarge,
-          textAlign: TextAlign.center,
-        ));
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+                child: Text(
+              'Upload Completed \nNow You Can Go Back',
+              style: Theme.of(context).textTheme.bodyLarge,
+              textAlign: TextAlign.center,
+            )),
+            ElevatedButton(
+                onPressed: () async {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
+                    type: FileType.audio,
+                    allowMultiple: false,
+                  );
+                  if (result != null) {
+                    final File audioFile = File(result.files.single.path!);
+                    if (context.mounted) {
+                      context
+                          .read<AudioUploadBloc>()
+                          .add(ExtractMetadataEvent(audioFile: audioFile));
+                    }
+                  }
+                },
+                child: Text('Choose File')),
+          ],
+        );
       }
       if (state is Uploading) {
         return Center(
@@ -160,6 +201,23 @@ class AudioUploadPage extends StatelessWidget {
                     child: const Center(child: Text('Upload')),
                   ),
                 ),
+                ElevatedButton(
+                    onPressed: () async {
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles(
+                        type: FileType.audio,
+                        allowMultiple: false,
+                      );
+                      if (result != null) {
+                        final File audioFile = File(result.files.single.path!);
+                        if (context.mounted) {
+                          context
+                              .read<AudioUploadBloc>()
+                              .add(ExtractMetadataEvent(audioFile: audioFile));
+                        }
+                      }
+                    },
+                    child: Text('Choose File')),
               ],
             ),
           ),

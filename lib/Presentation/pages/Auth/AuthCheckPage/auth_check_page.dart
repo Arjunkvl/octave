@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/cubit/auth_status_checking_cubit.dart';
@@ -15,7 +13,6 @@ class AuthCheckPage extends StatelessWidget {
     return Scaffold(
         body: BlocListener<AuthStatusCheckingCubit, AuthStatusCheckingState>(
       listener: (context, state) {
-        log('message');
         if (state.isLoggedIn) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(

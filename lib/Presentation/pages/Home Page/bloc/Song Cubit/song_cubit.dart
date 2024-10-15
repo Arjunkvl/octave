@@ -8,12 +8,16 @@ part 'song_state.dart';
 
 class SongCubit extends Cubit<SongState> {
   SongCubit() : super(SongLoading());
+  List<Song> list = [];
   Future<void> fetchSongs({required List songIds}) async {
-    final result = await locator<GetSongFromSongIds>().call(songIds: songIds);
-    result.fold(() {
-      emit(SongError());
-    }, (songs) {
-      emit(SongLoaded(songs: songs));
-    });
+    if (list.isEmpty) {
+      final result = await locator<GetSongFromSongIds>().call(songIds: songIds);
+      result.fold(() {
+        emit(SongError());
+      }, (songs) {
+        list = songs;
+        emit(SongLoaded(songs: songs));
+      });
+    }
   }
 }

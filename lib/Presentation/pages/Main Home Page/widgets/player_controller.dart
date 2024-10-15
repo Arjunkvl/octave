@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/helpers/button_states.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
 import 'package:marshal/data/models/song_model.dart';
 
@@ -64,35 +65,36 @@ class PlayerController extends StatelessWidget {
                 SizedBox(
                   width: 10.w,
                 ),
-                ValueListenableBuilder(
-                    valueListenable: isPlaying,
-                    builder: (context, value, _) {
-                      return GestureDetector(
-                        onTap: () {
-                          if (isPlaying.value) {
-                            // Only dispatch PauseSongEvent if the song is currently playing
-
-                            context
-                                .read<PlayingPageBloc>()
-                                .add(PauseSongEvent());
-                            // Update state after dispatching
-                            isPlaying.value = false;
-                          } else {
-                            // Only dispatch PlaySongEvent if the song is currently paused
-                            context
-                                .read<PlayingPageBloc>()
-                                .add(PlaySongEvent());
-                            // Update state after dispatching
-                            isPlaying.value = true;
-                          }
-                        },
-                        child: Icon(
-                          value ? Icons.pause : Icons.play_arrow,
-                          color: Colors.black,
-                          size: 30,
-                        ),
-                      );
-                    }),
+                IconButton(
+                  onPressed: () {
+                    if (playButtonState.value == PlayButtonState.paused) {
+                      context.read<PlayingPageBloc>().add(PauseSongEvent());
+                    }
+                    if (playButtonState.value == PlayButtonState.playing) {
+                      context.read<PlayingPageBloc>().add(PlaySongEvent());
+                    }
+                  },
+                  icon: ValueListenableBuilder(
+                      valueListenable: playButtonState,
+                      builder: (context, value, _) {
+                        return switch (value) {
+                          PlayButtonState.loading =>
+                            const CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
+                          PlayButtonState.playing => Icon(
+                              Icons.play_arrow,
+                              size: 30,
+                              color: Colors.black,
+                            ),
+                          PlayButtonState.paused => Icon(
+                              Icons.pause,
+                              size: 30,
+                              color: Colors.black,
+                            ),
+                        };
+                      }),
+                ),
                 SizedBox(
                   width: 10.w,
                 ),
