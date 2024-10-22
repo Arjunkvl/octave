@@ -38,6 +38,10 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       }
     });
     on<AddSongEvent>((event, emit) async {
+      final Box<Song> box = await Hive.openBox('songsBox');
+      if (!box.values.contains(event.song)) {
+        await box.add(event.song);
+      }
       final mediaItem = MediaItem(
         id: '0',
         title: event.song.title,

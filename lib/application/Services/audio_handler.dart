@@ -71,6 +71,7 @@ class CustmAudioHandler extends BaseAudioHandler {
         ],
         systemActions: const {
           MediaAction.seek,
+          MediaAction.skipToNext,
         },
         androidCompactActionIndices: const [0, 1, 3],
         processingState: const {
