@@ -4,8 +4,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:marshal/Presentation/Theme%20Data/theme_data.dart';
 import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/bloc/audio_upload_bloc.dart';
 import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/auth_check_page.dart';
@@ -18,32 +16,22 @@ import 'package:marshal/Presentation/pages/Home%20Page/bloc/All%20Song/all_songs
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/Progress%20Bar/progress_bar_cubit.dart';
+import 'package:marshal/Presentation/pages/Search%20Page/cubit/Response%20Songs/response_songs_cubit.dart';
+import 'package:marshal/application/Services/Spotify/spotify_api.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
-import 'package:marshal/data/models/song_model.dart';
+import 'package:marshal/core/hive_registration.dart';
 import 'package:marshal/firebase_options.dart';
-import 'package:path_provider/path_provider.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  HydratedBloc.storage = await HydratedStorage.build(
-      storageDirectory: await getApplicationDocumentsDirectory());
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await Hive.initFlutter();
-  Hive.registerAdapter(SongAdapter());
-  // final Box<Song> s = await Hive.openBox('currentlyPlayingSongs');
-  // await s.clear();
+  await hiveStartUp();
   setUpLocator();
-  // await JustAudioBackground.init(
-  //   androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-  //   androidNotificationChannelName: 'Audio playback',
-  //   androidNotificationOngoing: true,
-  // );
-
+  SpotifyService().fetchSpotifyApiToken();
   runApp(const Marshal());
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: [SystemUiOverlay.top]);
@@ -54,15 +42,13 @@ class Marshal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   ScreenUtilInit(
-
-    //   );
-    // });
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) => GreetingsCubit(),
+        ),
+        BlocProvider(
+          create: (context) => ResponseSongsCubit(),
         ),
         BlocProvider(
           create: (context) => ProgressBarCubit()..listenToCurrentPosition(),

@@ -525,6 +525,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  freezed_annotation:
+    dependency: transitive
+    description:
+      name: freezed_annotation
+      sha256: c2e2d632dd9b8a2b7751117abcfc2b4888ecfe181bd9fca7170d9ef02e595fe2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.4"
   frontend_server_client:
     dependency: transitive
     description:
@@ -621,14 +629,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
-  hydrated_bloc:
-    dependency: "direct main"
-    description:
-      name: hydrated_bloc
-      sha256: af35b357739fe41728df10bec03aad422cdc725a1e702e03af9d2a41ea05160c
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.1.5"
   id3tag:
     dependency: "direct main"
     description:
@@ -657,10 +657,10 @@ packages:
     dependency: transitive
     description:
       name: js
-      sha256: c1b2e9b5ea78c45e1a0788d29606ba27dc5f71f019f32ca5140f61ef071838cf
+      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.1"
+    version: "0.6.7"
   json_annotation:
     dependency: "direct main"
     description:
@@ -741,6 +741,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
+  lists:
+    dependency: transitive
+    description:
+      name: lists
+      sha256: "4ca5c19ae4350de036a7e996cdd1ee39c93ac0a2b840f4915459b7d0a7d4ab27"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   logging:
     dependency: transitive
     description:
@@ -797,6 +805,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  oauth2:
+    dependency: transitive
+    description:
+      name: oauth2
+      sha256: c84470642cbb2bec450ccab2f8520c079cd1ca546a76ffd5c40589e07f4e8bf4
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   octo_image:
     dependency: transitive
     description:
@@ -1058,6 +1074,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  spotify:
+    dependency: "direct main"
+    description:
+      name: spotify
+      sha256: "705f09a457a893973451c15f4072670ac4783d67e42c35c080c55a48dee3a01f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.7"
   sprintf:
     dependency: transitive
     description:
@@ -1154,6 +1178,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
+  uni_links2:
+    dependency: "direct main"
+    description:
+      name: uni_links2
+      sha256: e39fc8d1760750cd99a87dc8e870247b136132803e2e0bac53db6890292755c7
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.0+2"
+  uni_links2_platform_interface:
+    dependency: transitive
+    description:
+      name: uni_links2_platform_interface
+      sha256: "3d8db90639b7fb07c0e11b44bdc29c77deec9d9f22a389144fa95f67bd273975"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0+2"
+  uni_links_web2:
+    dependency: transitive
+    description:
+      name: uni_links_web2
+      sha256: "7cdeddbca7b004f84f1f01e8e3f6225c49717b18f7be58c079e479ae6e654067"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0+2"
+  unicode:
+    dependency: transitive
+    description:
+      name: unicode
+      sha256: "0f69e46593d65245774d4f17125c6084d2c20b4e473a983f6e21b7d7762218f1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1"
   universal_io:
     dependency: transitive
     description:
@@ -1274,6 +1330,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
+  youtube_explode_dart:
+    dependency: "direct main"
+    description:
+      name: youtube_explode_dart
+      sha256: "51ca5b2c03bf56060143d4f87df90ec3227592d7ae8a8003532533ae019d4291"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.6"
 sdks:
   dart: ">=3.6.0-0 <4.0.0"
   flutter: ">=3.24.0"

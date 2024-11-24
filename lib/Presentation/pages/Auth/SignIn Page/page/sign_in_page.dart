@@ -119,14 +119,16 @@ class _SignInPageState extends State<SignInPage> {
                         }
                       },
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (_email.text != '' && _password.text != '') {
-                            context.read<AuthBloc>().add(
-                                  UserSignInEvent(
-                                    email: _email.text,
-                                    password: _password.text,
-                                  ),
-                                );
+                            if (context.mounted) {
+                              context.read<AuthBloc>().add(
+                                    UserSignInEvent(
+                                      email: _email.text,
+                                      password: _password.text,
+                                    ),
+                                  );
+                            }
                           }
                         },
                         child: Container(

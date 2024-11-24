@@ -1,8 +1,19 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:marshal/Presentation/core/colors.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
+import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/page/playing_page.dart';
+import 'package:marshal/Presentation/pages/Search%20Page/cubit/Response%20Songs/response_songs_cubit.dart';
+import 'package:marshal/application/Services/Youtube/youtube_api.dart';
+import 'package:marshal/data/models/song_model.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -32,14 +43,35 @@ class SearchPage extends StatelessWidget {
                 height: 15.h,
               ),
               Expanded(
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    return const SearchTile();
+                child: BlocBuilder<ResponseSongsCubit, ResponseSongsState>(
+                  builder: (context, state) {
+                    if (state is ShowResultState) {
+                      return ListView.separated(
+                        itemBuilder: (context, index) => GestureDetector(
+                          onTap: () {
+                            context
+                                .read<PlaySongCubit>()
+                                .playSong(song: state.listOfSongs[index]);
+                            context.read<PlayingPageBloc>().add(
+                                AddSongEvent(song: state.listOfSongs[index]));
+                            context
+                                .read<PlayerControllerCubit>()
+                                .showPlayerController(
+                                    song: state.listOfSongs[index]);
+                          },
+                          child: SearchTile(
+                            song: state.listOfSongs[index],
+                          ),
+                        ),
+                        separatorBuilder: (context, index) => const SizedBox(
+                          height: 15,
+                        ),
+                        itemCount: state.listOfSongs.length,
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
                   },
-                  separatorBuilder: (context, index) => const SizedBox(
-                    height: 15,
-                  ),
-                  itemCount: 12,
                 ),
               ),
             ],
@@ -71,8 +103,12 @@ class SearchAppBar extends StatelessWidget {
           SizedBox(
             width: 10.w,
           ),
-          const Expanded(
+          Expanded(
             child: TextField(
+              onChanged: (query) {
+                context.read<ResponseSongsCubit>().trySearching(query: query);
+              },
+              style: Theme.of(context).textTheme.displayLarge,
               decoration: InputDecoration.collapsed(
                   hintText: 'What do you what to listen to?'),
             ),
@@ -84,9 +120,8 @@ class SearchAppBar extends StatelessWidget {
 }
 
 class SearchTile extends StatelessWidget {
-  const SearchTile({
-    super.key,
-  });
+  final Song song;
+  const SearchTile({super.key, required this.song});
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +130,9 @@ class SearchTile extends StatelessWidget {
         Container(
           width: 63.w,
           height: 63.w,
-          color: Colors.amber,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: CachedNetworkImageProvider(song.coverUrl))),
         ),
         SizedBox(
           width: 15.w,
@@ -103,12 +140,16 @@ class SearchTile extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Perfect',
-              style: Theme.of(context).textTheme.bodyMedium,
+            SizedBox(
+              width: 250,
+              child: Text(
+                overflow: TextOverflow.ellipsis,
+                song.title,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             ),
             Text(
-              'song • Ed Sharen',
+              song.artist,
               style: Theme.of(context).textTheme.displayMedium,
             ),
           ],

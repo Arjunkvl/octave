@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/category%20Cubit/category_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Top%20Tile%20Cubit/top_tile_cubit.dart';
@@ -13,7 +15,8 @@ import 'package:marshal/Presentation/pages/Home%20Page/widgets/recent_widget_at_
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/top_tile.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/page/playing_page.dart';
-import 'package:marshal/Presentation/pages/Select%20Page/select_page.dart';
+import 'package:marshal/Presentation/pages/Search%20Page/page/search_page.dart';
+import 'package:marshal/application/Services/Spotify/spotify_api.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,8 +36,10 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  int page = 1;
   @override
   Widget build(BuildContext context) {
+    SpotifyService().fetchSpotifyApiToken();
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -45,22 +50,22 @@ class _HomePageState extends State<HomePage> {
                 pinned: false,
                 leadingWidth: 200.w,
                 backgroundColor: Colors.transparent,
-                // actions: [
-                //   GestureDetector(
-                //     onTap: () {
-                //       goToSelectPage(context);
-                //     },
-                //     child: SvgPicture.asset(AppIcons.searchIcon),
-                //   ),
-                //   SizedBox(
-                //     width: 20.w,
-                //   ),
-                //   SvgPicture.asset(AppIcons.recentIcon),
-                //   SizedBox(
-                //     width: 20.w,
-                //   ),
-                //   SvgPicture.asset(AppIcons.settingsIcon),
-                // ],
+                actions: [
+                  GestureDetector(
+                    onTap: () {
+                      goToSelectPage(context);
+                    },
+                    child: SvgPicture.asset(AppIcons.searchIcon),
+                  ),
+                  // SizedBox(
+                  //   width: 20.w,
+                  // ),
+                  // SvgPicture.asset(AppIcons.recentIcon),
+                  // SizedBox(
+                  //   width: 20.w,
+                  // ),
+                  // SvgPicture.asset(AppIcons.settingsIcon),
+                ],
                 leading: BlocBuilder<GreetingsCubit, GreetingsState>(
                   builder: (context, state) {
                     return Text(
@@ -127,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'All Realeses',
+                      'Your Taps',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     SizedBox(
@@ -148,7 +153,9 @@ class _HomePageState extends State<HomePage> {
                                     scrollInfo.metrics.maxScrollExtent &&
                                 !isfetching) {
                               isfetching = true;
-                              context.read<AllSongsCubit>().getAllSongs();
+                              context
+                                  .read<AllSongsCubit>()
+                                  .getAllSongs(page: ++page);
                             }
                             return false;
                           },
@@ -230,7 +237,7 @@ class _HomePageState extends State<HomePage> {
 void goToSelectPage(context) {
   Navigator.of(context).push(
     MaterialPageRoute(
-      builder: (context) => const SelectPage(),
+      builder: (context) => const SearchPage(),
     ),
   );
 }

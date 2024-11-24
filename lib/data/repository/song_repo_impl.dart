@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -103,20 +105,19 @@ class SongRepoImpl implements SongRepo {
   }
 
   @override
-  Future<Option<List<Song>>> getAllSongsWithPagination() async {
-    final db = FirebaseFirestore.instance;
-    final query =
-        db.collection('songs').orderBy('uploadedAt', descending: true).limit(9);
-    if (lastDoc == null) {
-      final result = await query.get();
-      songs.addAll(result.docs.map((song) => Song.fromDocument(song.data())));
-      lastDoc = result.docs.last;
-    } else {
-      final result = await query.startAfterDocument(lastDoc!).get();
-      if (result.docs.isNotEmpty) {
-        songs.addAll(result.docs.map((song) => Song.fromDocument(song.data())));
-        lastDoc = result.docs.last;
-      }
+  Future<Option<List<Song>>> getAllSongsWithPagination(
+      {required int page}) async {
+    const int pageSize = 9;
+    final Box<Song> box = await Hive.openBox('songsBox');
+    final int startIndex = page * pageSize;
+    final int endIndex = startIndex + pageSize;
+    final int length = box.length;
+    if (startIndex > length) {
+      return none();
+    }
+    final List<Song> songs = [];
+    for (int i = startIndex; i < endIndex && i < length; i++) {
+      songs.add(box.getAt(i)!);
     }
     return some(songs);
   }

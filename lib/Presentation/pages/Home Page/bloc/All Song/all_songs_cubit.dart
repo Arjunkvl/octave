@@ -9,12 +9,12 @@ import 'package:marshal/domain/Usecases/usecases.dart';
 part 'all_songs_state.dart';
 
 class AllSongsCubit extends Cubit<AllSongsState> {
-  AllSongsCubit() : super(AllSongsInitial());
-  Future<void> getAllSongs() async {
+  AllSongsCubit() : super(AllSongsInitial(songs: []));
+  Future<void> getAllSongs({int page = 1}) async {
     final Option<List<Song>> result =
-        await locator<GetAllSongsWithPagination>().call();
+        await locator<GetAllSongsWithPagination>().call(page: page);
     result.fold(() {}, (songs) {
-      emit(AllSongsLoaded(songs: List.from(songs)));
+      emit(AllSongsLoaded(songs: List.from(state.songs)..addAll(songs)));
       isfetching = false;
     });
   }

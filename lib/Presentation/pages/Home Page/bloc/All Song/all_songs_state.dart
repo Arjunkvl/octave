@@ -1,19 +1,20 @@
 part of 'all_songs_cubit.dart';
 
 sealed class AllSongsState extends Equatable {
-  const AllSongsState();
-
-  @override
-  List<Object> get props => [];
-}
-
-final class AllSongsInitial extends AllSongsState {}
-
-final class AllSongLoading extends AllSongsState {}
-
-final class AllSongsLoaded extends AllSongsState {
   final List<Song> songs;
-  AllSongsLoaded({required this.songs});
+  AllSongsState({required this.songs});
   @override
   List<Object> get props => [songs];
+}
+
+final class AllSongsInitial extends AllSongsState {
+  AllSongsInitial({required super.songs});
+}
+
+final class AllSongLoading extends AllSongsState {
+  AllSongLoading({required super.songs});
+}
+
+final class AllSongsLoaded extends AllSongsState {
+  AllSongsLoaded({required super.songs});
 }

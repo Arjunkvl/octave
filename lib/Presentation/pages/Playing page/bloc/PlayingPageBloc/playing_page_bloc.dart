@@ -8,6 +8,7 @@ import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Cont
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/button_states.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/variables.dart';
+import 'package:marshal/application/Services/Youtube/youtube_api.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/data/models/song_model.dart';
 
@@ -38,16 +39,24 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       }
     });
     on<AddSongEvent>((event, emit) async {
+      _audioHandler.pause();
+      emit(PlayingPageInitial());
       final Box<Song> box = await Hive.openBox('songsBox');
       if (!box.values.contains(event.song)) {
         await box.add(event.song);
       }
+
       final mediaItem = MediaItem(
         id: '0',
         title: event.song.title,
         artUri: Uri.parse(event.song.coverUrl),
         artist: event.song.artist,
-        extras: {'songId': event.song.songId, 'songUrl': event.song.songUrl},
+        extras: {
+          'songId': event.song.songId,
+          'songUrl': event.song.songUrl.contains('googlevideo')
+              ? await YoutubeApiServices().getAudioOnlyLink(song: event.song)
+              : event.song.songUrl
+        },
       );
       int indexOfSong = _audioHandler.queue.value
           .indexWhere((m) => m.extras!['songId'] == event.song.songId);
@@ -62,9 +71,8 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
           event.song.songId)) {
         _audioHandler.skipToQueueItem(indexOfSong);
       }
-      _audioHandler.play();
-      log('blocked');
       add(UpdatePlayingPageEvent(song: event.song));
+      _audioHandler.play();
     });
 
     //Other Events;

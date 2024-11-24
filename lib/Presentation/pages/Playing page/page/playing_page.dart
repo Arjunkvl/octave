@@ -43,8 +43,7 @@ class PlayingPage extends StatelessWidget {
                             width: 25,
                           ),
                         ),
-                        SizedBox(
-                          width: 200,
+                        Flexible(
                           child: Text(
                             'From ${state.song.artist}',
                             style: Theme.of(context).textTheme.bodySmall,
@@ -177,7 +176,11 @@ class PlayingPage extends StatelessWidget {
                 ],
               );
             } else {
-              return SizedBox.shrink();
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              );
             }
           },
         ),

@@ -47,7 +47,7 @@ class GetAllSongsWithPagination {
   final SongRepoImpl repository;
 
   GetAllSongsWithPagination({required this.repository});
-  Future<Option<List<Song>>> call() async {
-    return await repository.getAllSongsWithPagination();
+  Future<Option<List<Song>>> call({required int page}) async {
+    return await repository.getAllSongsWithPagination(page: page);
   }
 }

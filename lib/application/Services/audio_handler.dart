@@ -92,8 +92,9 @@ class CustmAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> play() async {
-    playbackState.add(playbackState.value
-        .copyWith(playing: true, controls: [MediaControl.pause]));
+    playbackState.add(playbackState.value.copyWith(playing: true, controls: [
+      MediaControl.pause,
+    ]));
     await _player.play();
   }
 
@@ -127,9 +128,5 @@ class CustmAudioHandler extends BaseAudioHandler {
   Future<void> skipToPrevious() async {
     await _player.seekToPrevious();
     await _player.play();
-  }
-
-  bool hassNext() {
-    return _player.hasNext;
   }
 }
