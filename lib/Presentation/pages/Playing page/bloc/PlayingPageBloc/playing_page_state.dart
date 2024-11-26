@@ -9,6 +9,13 @@ abstract class PlayingPageState extends Equatable {
 
 class PlayingPageInitial extends PlayingPageState {}
 
+class PlayingPageForceLoadingState extends PlayingPageState {
+  final Song song;
+  PlayingPageForceLoadingState({required this.song});
+  @override
+  List<Object> get props => [song];
+}
+
 class PlayingState extends PlayingPageState {
   final Song song;
   PlayingState({required this.song});

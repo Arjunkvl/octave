@@ -6,12 +6,14 @@ import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/helpers/variables.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/widgets/player_controller.dart';
+import 'package:marshal/Presentation/pages/Search%20Page/page/search_page.dart';
 
 class MainHomePage extends StatelessWidget {
   MainHomePage({super.key});
 
   final List<Widget> _screens = [
     HomePage(),
+    SearchPage(),
     AudioUploadPage(),
   ];
 
@@ -40,6 +42,7 @@ class MainHomePage extends StatelessWidget {
         valueListenable: index,
         builder: (context, value, _) {
           return BottomNavigationBar(
+            fixedColor: Colors.white,
             enableFeedback: true,
             currentIndex: value,
             onTap: (i) {
@@ -47,6 +50,8 @@ class MainHomePage extends StatelessWidget {
             },
             items: [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.search), label: 'Search'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.upload_file), label: 'Upload')
             ],

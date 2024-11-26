@@ -176,14 +176,25 @@ class PlayingPage extends StatelessWidget {
                 ],
               );
             } else {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
+              return SizedBox.shrink();
+            }
+          },
+        ),
+        BlocListener<PlayingPageBloc, PlayingPageState>(
+          listener: (context, state) {
+            if (state is PlayingPageForceLoadingState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Getting The Link please Wait'),
+                  backgroundColor: Colors.white,
+                  behavior: SnackBarBehavior.floating,
+                  padding: EdgeInsets.all(10),
                 ),
               );
             }
           },
-        ),
+          child: SizedBox.shrink(),
+        )
       ],
     );
   }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/category%20Cubit/category_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Top%20Tile%20Cubit/top_tile_cubit.dart';
@@ -15,7 +13,6 @@ import 'package:marshal/Presentation/pages/Home%20Page/widgets/recent_widget_at_
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/top_tile.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/page/playing_page.dart';
-import 'package:marshal/Presentation/pages/Search%20Page/page/search_page.dart';
 import 'package:marshal/application/Services/Spotify/spotify_api.dart';
 
 class HomePage extends StatefulWidget {
@@ -51,12 +48,6 @@ class _HomePageState extends State<HomePage> {
                 leadingWidth: 200.w,
                 backgroundColor: Colors.transparent,
                 actions: [
-                  GestureDetector(
-                    onTap: () {
-                      goToSelectPage(context);
-                    },
-                    child: SvgPicture.asset(AppIcons.searchIcon),
-                  ),
                   // SizedBox(
                   //   width: 20.w,
                   // ),
@@ -232,12 +223,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-}
-
-void goToSelectPage(context) {
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) => const SearchPage(),
-    ),
-  );
 }
