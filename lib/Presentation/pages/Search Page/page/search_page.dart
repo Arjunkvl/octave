@@ -1,18 +1,12 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:marshal/Presentation/core/colors.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
-import 'package:marshal/Presentation/pages/Playing%20page/page/playing_page.dart';
 import 'package:marshal/Presentation/pages/Search%20Page/cubit/Response%20Songs/response_songs_cubit.dart';
-import 'package:marshal/application/Services/Youtube/youtube_api.dart';
 import 'package:marshal/data/models/song_model.dart';
 
 class SearchPage extends StatelessWidget {
@@ -95,11 +89,6 @@ class SearchAppBar extends StatelessWidget {
       color: kbackGroundGrey,
       child: Row(
         children: [
-          GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: SvgPicture.asset(AppIcons.backArrow)),
           SizedBox(
             width: 10.w,
           ),

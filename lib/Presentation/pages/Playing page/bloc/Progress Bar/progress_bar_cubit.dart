@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,13 +16,9 @@ class ProgressBarCubit extends Cubit<ProgressBarState> {
             playerBarEntity: PlayerBarEntity(
                 currentDuration: Duration.zero, totalDuration: Duration.zero)));
   void listenToCurrentPosition() {
-    AudioService.position.listen((position) async {
-      if (_audioHandler.mediaItem.value!.duration == null) {
-        return;
-      }
-      if (_audioHandler.mediaItem.value!.duration! - position <=
-          Duration(seconds: 3)) {
-        locator<PlayingPageBloc>().add(SkipToNextEvent());
+    AudioService.position.listen(cancelOnError: true, (position) async {
+      if (_audioHandler.mediaItem.value == null) {
+        log('Is Null Triggered');
         return;
       }
       emit(ProgressBarInitial(

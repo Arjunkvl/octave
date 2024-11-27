@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/page/audio_upload_page.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/helpers/variables.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/widgets/player_controller.dart';
 import 'package:marshal/Presentation/pages/Search%20Page/page/search_page.dart';
+import '../../Home Page/bloc/Play Song Cubit/play_song_cubit.dart';
+import '../../Playing page/page/playing_page.dart';
 
 class MainHomePage extends StatelessWidget {
   MainHomePage({super.key});
@@ -36,6 +37,21 @@ class MainHomePage extends StatelessWidget {
               }
             },
           ),
+          BlocListener<PlaySongCubit, PlaySongState>(
+            listener: (context, state) {
+              if (state is ShowSongPage) {
+                showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context) {
+                      return PlayingPage(
+                        song: state.song,
+                      );
+                    });
+              }
+            },
+            child: SizedBox.shrink(),
+          ),
         ],
       ),
       bottomNavigationBar: ValueListenableBuilder(
@@ -47,6 +63,9 @@ class MainHomePage extends StatelessWidget {
             currentIndex: value,
             onTap: (i) {
               index.value = i;
+              if (i == 0) {
+                FocusScope.of(context).unfocus();
+              }
             },
             items: [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),

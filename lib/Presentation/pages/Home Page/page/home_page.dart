@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/category%20Cubit/category_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Top%20Tile%20Cubit/top_tile_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/All%20Song/all_songs_cubit.dart';
@@ -12,7 +11,6 @@ import 'package:marshal/Presentation/pages/Home%20Page/widgets/body_list_view.da
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/recent_widget_at_top.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/top_tile.dart';
-import 'package:marshal/Presentation/pages/Playing%20page/page/playing_page.dart';
 import 'package:marshal/application/Services/Spotify/spotify_api.dart';
 
 class HomePage extends StatefulWidget {
@@ -195,21 +193,6 @@ class _HomePageState extends State<HomePage> {
                           return const SizedBox.shrink();
                         }
                       },
-                    ),
-                    BlocListener<PlaySongCubit, PlaySongState>(
-                      listener: (context, state) {
-                        if (state is ShowSongPage) {
-                          showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (context) {
-                                return PlayingPage(
-                                  song: state.song,
-                                );
-                              });
-                        }
-                      },
-                      child: SizedBox.shrink(),
                     ),
                     SizedBox(
                       height: 20.h,
