@@ -131,12 +131,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 160.h,
-                  child: BlocBuilder<AllSongsCubit, AllSongsState>(
-                    builder: (context, state) {
-                      if (state is AllSongsLoaded) {
-                        return NotificationListener<ScrollNotification>(
+                child: BlocBuilder<AllSongsCubit, AllSongsState>(
+                  builder: (context, state) {
+                    if (state is AllSongsLoaded) {
+                      return SizedBox(
+                        height: 160.h,
+                        child: NotificationListener<ScrollNotification>(
                           onNotification: (ScrollNotification scrollInfo) {
                             if (scrollInfo.metrics.pixels ==
                                     scrollInfo.metrics.maxScrollExtent &&
@@ -159,12 +159,15 @@ class _HomePageState extends State<HomePage> {
                               song: state.songs[index],
                             ),
                           ),
-                        );
-                      } else {
-                        return SizedBox.shrink();
-                      }
-                    },
-                  ),
+                        ),
+                      );
+                    }
+                    if (state is NoSongFoundState) {
+                      return Text('Tap On Some Song First.');
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
                 ),
               ),
               SliverToBoxAdapter(

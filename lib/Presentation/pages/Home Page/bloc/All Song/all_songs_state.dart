@@ -15,6 +15,10 @@ final class AllSongLoading extends AllSongsState {
   AllSongLoading({required super.songs});
 }
 
+final class NoSongFoundState extends AllSongsState {
+  NoSongFoundState({required super.songs});
+}
+
 final class AllSongsLoaded extends AllSongsState {
   AllSongsLoaded({required super.songs});
 }

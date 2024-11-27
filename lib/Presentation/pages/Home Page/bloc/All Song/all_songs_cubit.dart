@@ -13,7 +13,9 @@ class AllSongsCubit extends Cubit<AllSongsState> {
   Future<void> getAllSongs({int page = 1}) async {
     final Option<List<Song>> result =
         await locator<GetAllSongsWithPagination>().call(page: page);
-    result.fold(() {}, (songs) {
+    result.fold(() {
+      emit(NoSongFoundState(songs: []));
+    }, (songs) {
       emit(AllSongsLoaded(songs: List.from(state.songs)..addAll(songs)));
       isfetching = false;
     });

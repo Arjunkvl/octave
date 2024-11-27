@@ -1,6 +1,5 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:marshal/application/Services/Youtube/youtube_api.dart';
 
 Future<AudioHandler> initAudioService() async {
   return await AudioService.init(
@@ -31,10 +30,8 @@ class CustmAudioHandler extends BaseAudioHandler {
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
     // manage Just Audio
-    final audioSource = await Future.wait(
-      mediaItems.map((mediaItem) => _createAudioSource(mediaItem)),
-    );
-    ;
+    final audioSource = mediaItems.map(_createAudioSource);
+
     await _playlist.addAll(audioSource.toList());
 
     // notify system
@@ -43,13 +40,9 @@ class CustmAudioHandler extends BaseAudioHandler {
     mediaItem.add(newQueue[0]);
   }
 
-  Future<LockCachingAudioSource> _createAudioSource(MediaItem mediaItem) async {
+  LockCachingAudioSource _createAudioSource(MediaItem mediaItem) {
     return LockCachingAudioSource(
-      Uri.parse(mediaItem.extras!['songUrl'].contains('googlevideo') ||
-              mediaItem.extras!['songUrl'] == ''
-          ? await YoutubeApiServices()
-              .getAudioOnlyLink(song: mediaItem.extras!['song'])
-          : mediaItem.extras!['songUrl']),
+      Uri.parse(mediaItem.extras!['songUrl']),
       tag: mediaItem,
     );
   }

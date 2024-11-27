@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:marshal/data/helping_var.dart';
 import 'package:marshal/data/models/Category%20model/category_model.dart';
 import 'package:marshal/data/models/song_model.dart';
 import 'package:marshal/domain/repository/repository.dart';
@@ -108,7 +105,7 @@ class SongRepoImpl implements SongRepo {
   Future<Option<List<Song>>> getAllSongsWithPagination(
       {required int page}) async {
     const int pageSize = 9;
-    final Box<Song> box = await Hive.openBox('songsBox');
+    final Box<Song> box = await Hive.openBox('tapsBox');
     final int startIndex = page * pageSize;
     final int endIndex = startIndex + pageSize;
     final int length = box.length;
@@ -118,6 +115,9 @@ class SongRepoImpl implements SongRepo {
     final List<Song> songs = [];
     for (int i = startIndex; i < endIndex && i < length; i++) {
       songs.add(box.getAt(i)!);
+    }
+    if (songs.isEmpty) {
+      return none();
     }
     return some(songs);
   }
