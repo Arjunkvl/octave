@@ -57,10 +57,9 @@ dependencies:
   just_audio_background: ^0.0.1-beta.13
   palette_generator: ^0.3.3+4
   path_provider: ^2.1.4
-  shared_preferences: ^2.3.2
+  shared_preferences: 2.3.3
   shimmer: ^3.0.0
   spotify: ^0.13.7
-  uni_links2: ^0.6.0+2
   youtube_explode_dart: ^2.3.6
 
 dev_dependencies:

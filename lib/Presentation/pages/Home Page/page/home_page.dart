@@ -6,10 +6,10 @@ import 'package:marshal/Presentation/pages/Home%20Page/bloc/Top%20Tile%20Cubit/t
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/All%20Song/all_songs_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/helpers/sliver_for_sticky_top.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/helpers/variables.dart';
+// import 'package:marshal/Presentation/pages/Home%20Page/helpers/variables.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/body_list_view.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/recent_widget_at_top.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
+// import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/top_tile.dart';
 import 'package:marshal/application/Services/Spotify/spotify_api.dart';
 
@@ -131,50 +131,67 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               SliverToBoxAdapter(
-                child: BlocBuilder<AllSongsCubit, AllSongsState>(
-                  builder: (context, state) {
-                    if (state is AllSongsLoaded) {
-                      return SizedBox(
-                        height: 160.h,
-                        child: NotificationListener<ScrollNotification>(
-                          onNotification: (ScrollNotification scrollInfo) {
-                            if (scrollInfo.metrics.pixels ==
-                                    scrollInfo.metrics.maxScrollExtent &&
-                                !isfetching) {
-                              isfetching = true;
-                              context
-                                  .read<AllSongsCubit>()
-                                  .getAllSongs(page: page++);
-                            }
-                            return false;
-                          },
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: state.songs.length,
-                            separatorBuilder: (context, index) => SizedBox(
-                              width: 10.w,
-                            ),
-                            itemBuilder: (context, index) => SongListViewTile(
-                              song: state.songs[index],
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                    if (state is NoSongFoundState) {
-                      return Text('Tap On Some Song First.');
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                  },
-                ),
+                child: Text('This Section Is Under Dev'),
               ),
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 20.h,
-                ),
-              ),
+              // SliverToBoxAdapter(
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         'Your Taps',
+              //         style: Theme.of(context).textTheme.bodyLarge,
+              //       ),
+              //       SizedBox(
+              //         height: 15.h,
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // SliverToBoxAdapter(
+              //   child: BlocBuilder<AllSongsCubit, AllSongsState>(
+              //     builder: (context, state) {
+              //       if (state is AllSongsLoaded) {
+              //         return SizedBox(
+              //           height: 160.h,
+              //           child: NotificationListener<ScrollNotification>(
+              //             onNotification: (ScrollNotification scrollInfo) {
+              //               if (scrollInfo.metrics.pixels ==
+              //                       scrollInfo.metrics.maxScrollExtent &&
+              //                   !isfetching) {
+              //                 isfetching = true;
+              //                 context
+              //                     .read<AllSongsCubit>()
+              //                     .getAllSongs(page: page++);
+              //               }
+              //               return false;
+              //             },
+              //             child: ListView.separated(
+              //               shrinkWrap: true,
+              //               scrollDirection: Axis.horizontal,
+              //               itemCount: state.songs.length,
+              //               separatorBuilder: (context, index) => SizedBox(
+              //                 width: 10.w,
+              //               ),
+              //               itemBuilder: (context, index) => SongListViewTile(
+              //                 song: state.songs[index],
+              //               ),
+              //             ),
+              //           ),
+              //         );
+              //       }
+              //       if (state is NoSongFoundState) {
+              //         return Text('Tap On Some Song First.');
+              //       } else {
+              //         return SizedBox.shrink();
+              //       }
+              //     },
+              //   ),
+              // ),
+              // SliverToBoxAdapter(
+              //   child: SizedBox(
+              //     height: 20.h,
+              //   ),
+              // ),
               SliverToBoxAdapter(
                 child: Column(
                   children: [
