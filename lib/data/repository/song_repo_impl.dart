@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -104,21 +106,23 @@ class SongRepoImpl implements SongRepo {
   @override
   Future<Option<List<Song>>> getAllSongsWithPagination(
       {required int page}) async {
-    const int pageSize = 9;
-    final Box<Song> box = await Hive.openBox('tapsBox');
+    final Box<Song> box = await Hive.openBox<Song>('tapsBox');
+    int pageSize = 9;
     final int startIndex = page * pageSize;
     final int endIndex = startIndex + pageSize;
     final int length = box.length;
     if (startIndex > length) {
+      log('called');
       return none();
     }
     final List<Song> songs = [];
     for (int i = startIndex; i < endIndex && i < length; i++) {
       songs.add(box.getAt(i)!);
     }
-    if (songs.isEmpty) {
+    if (songs.isNotEmpty) {
+      return some(songs);
+    } else {
       return none();
     }
-    return some(songs);
   }
 }

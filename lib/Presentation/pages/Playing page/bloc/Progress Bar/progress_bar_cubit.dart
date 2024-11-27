@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/player_bar_entity.dart';
 import 'package:marshal/application/dependency_injection.dart';
 

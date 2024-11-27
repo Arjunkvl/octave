@@ -8,5 +8,5 @@ class SpotifyApiModel {
   final String api;
   @HiveField(1)
   final DateTime expairesAt;
-  SpotifyApiModel({required this.api, required this.expairesAt}) {}
+  SpotifyApiModel({required this.api, required this.expairesAt});
 }

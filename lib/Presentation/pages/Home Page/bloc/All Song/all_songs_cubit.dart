@@ -10,11 +10,13 @@ part 'all_songs_state.dart';
 
 class AllSongsCubit extends Cubit<AllSongsState> {
   AllSongsCubit() : super(AllSongsInitial(songs: []));
-  Future<void> getAllSongs({int page = 1}) async {
+  Future<void> getAllSongs({int page = 0}) async {
     final Option<List<Song>> result =
         await locator<GetAllSongsWithPagination>().call(page: page);
     result.fold(() {
-      emit(NoSongFoundState(songs: []));
+      if (state.songs.isEmpty) {
+        emit(NoSongFoundState(songs: []));
+      }
     }, (songs) {
       emit(AllSongsLoaded(songs: List.from(state.songs)..addAll(songs)));
       isfetching = false;

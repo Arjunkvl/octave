@@ -34,7 +34,7 @@ class SpotifyService {
             ));
       }
     } catch (e) {
-      print(e);
+      return;
     }
   }
 

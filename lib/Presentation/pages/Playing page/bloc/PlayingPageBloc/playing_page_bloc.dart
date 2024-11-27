@@ -44,7 +44,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       add(UpdatePlayingPageEvent(song: event.song));
       final Box<Song> box = await Hive.openBox<Song>('tapsBox');
       if (!box.values.contains(event.song)) {
-        log('song added');
+        log('song added current length:${box.values.length}');
         await box.add(event.song);
       }
       final mediaItem = MediaItem(

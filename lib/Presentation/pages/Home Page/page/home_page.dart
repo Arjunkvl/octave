@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  int page = 1;
+  int page = 0;
   @override
   Widget build(BuildContext context) {
     SpotifyService().fetchSpotifyApiToken();
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                               isfetching = true;
                               context
                                   .read<AllSongsCubit>()
-                                  .getAllSongs(page: ++page);
+                                  .getAllSongs(page: page++);
                             }
                             return false;
                           },
