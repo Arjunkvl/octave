@@ -15,14 +15,14 @@ class LogedInState extends AuthState {}
 
 class SignInFailed extends AuthState {
   final String errorMsg;
-  SignInFailed({required this.errorMsg});
+  const SignInFailed({required this.errorMsg});
   @override
   List<Object> get props => [errorMsg];
 }
 
 class SignUpFailed extends AuthState {
   final String errorMsg;
-  SignUpFailed({required this.errorMsg});
+  const SignUpFailed({required this.errorMsg});
   @override
   List<Object> get props => [errorMsg];
 }

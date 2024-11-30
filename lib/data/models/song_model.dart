@@ -19,8 +19,8 @@ class Song extends Equatable {
   @HiveField(5)
   final DateTime uploadedAt;
   @HiveField(6)
-  String fileHash;
-  Song(
+  final String fileHash;
+  const Song(
       {required this.uploadedAt,
       required this.artist,
       required this.songId,

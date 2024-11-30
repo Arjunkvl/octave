@@ -9,14 +9,14 @@ abstract class PlayingPageEvent extends Equatable {
 
 class AddSongEvent extends PlayingPageEvent {
   final Song song;
-  AddSongEvent({required this.song});
+  const AddSongEvent({required this.song});
   @override
   List<Object> get props => [song];
 }
 
 class UpdatePlayingPageEvent extends PlayingPageEvent {
   final Song song;
-  UpdatePlayingPageEvent({required this.song});
+  const UpdatePlayingPageEvent({required this.song});
   @override
   List<Object> get props => [song];
 }
@@ -33,7 +33,7 @@ class SkipToPrevious extends PlayingPageEvent {}
 
 class SeekEvent extends PlayingPageEvent {
   final Duration position;
-  SeekEvent({required this.position});
+  const SeekEvent({required this.position});
   @override
   List<Object> get props => [position];
 }

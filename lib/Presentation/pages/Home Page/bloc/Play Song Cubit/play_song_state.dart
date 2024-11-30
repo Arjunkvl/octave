@@ -12,5 +12,5 @@ final class PlaySongInitial extends PlaySongState {}
 final class ShowSongPage extends PlaySongState {
   final Song song;
 
-  ShowSongPage({required this.song});
+  const ShowSongPage({required this.song});
 }

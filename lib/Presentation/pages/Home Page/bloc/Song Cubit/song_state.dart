@@ -13,7 +13,7 @@ final class SongLoading extends SongState {}
 
 final class SongLoaded extends SongState {
   final List<Song> songs;
-  SongLoaded({required this.songs});
+  const SongLoaded({required this.songs});
   @override
   List<Object> get props => [songs];
 }

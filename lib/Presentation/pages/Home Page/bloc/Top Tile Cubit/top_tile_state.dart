@@ -13,7 +13,7 @@ final class TopTileLoading extends TopTileState {}
 
 final class TopTileLoaded extends TopTileState {
   final List<Song> songs;
-  TopTileLoaded({required this.songs});
+  const TopTileLoaded({required this.songs});
   @override
   List<Object> get props => [songs];
 }

@@ -1,5 +1,11 @@
+import 'dart:developer';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
+import 'package:marshal/application/dependency_injection.dart';
+import 'package:marshal/core/recently_playing_list.dart';
+import 'package:marshal/data/models/song_model.dart';
 
 Future<AudioHandler> initAudioService() async {
   return await AudioService.init(
@@ -13,7 +19,7 @@ Future<AudioHandler> initAudioService() async {
   );
 }
 
-class CustmAudioHandler extends BaseAudioHandler {
+class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
   final _player = AudioPlayer();
 
   final _playlist = ConcatenatingAudioSource(children: []);
@@ -23,8 +29,19 @@ class CustmAudioHandler extends BaseAudioHandler {
     _listenForDurationChanges();
   }
   Future<void> _loadEmptyPlayList() async {
-    _player.setLoopMode(LoopMode.all);
+    await _player.setLoopMode(LoopMode.all);
     await _player.setAudioSource(_playlist);
+  }
+
+  Future<void> setLoopMode(LoopMode loopMode) async {
+    switch (loopMode) {
+      case LoopMode.all:
+        _player.setLoopMode(LoopMode.all);
+      case LoopMode.one:
+        _player.setLoopMode(LoopMode.one);
+      default:
+        _player.setLoopMode(LoopMode.all);
+    }
   }
 
   @override
@@ -57,6 +74,8 @@ class CustmAudioHandler extends BaseAudioHandler {
       newQueue[index] = newMediaItem;
       queue.add(newQueue);
       mediaItem.add(newMediaItem);
+      locator<PlayingPageBloc>().add(
+          UpdatePlayingPageEvent(song: playingSongList[_player.currentIndex!]));
     });
   }
 
@@ -66,13 +85,14 @@ class CustmAudioHandler extends BaseAudioHandler {
       playbackState.add(playbackState.value.copyWith(
         controls: [
           // MediaControl.skipToPrevious,
+          MediaControl.skipToPrevious,
           if (playing) MediaControl.pause else MediaControl.play,
           MediaControl.stop,
+          MediaControl.skipToNext,
           // MediaControl.skipToNext,
         ],
         systemActions: const {
           MediaAction.seek,
-          MediaAction.skipToNext,
         },
         androidCompactActionIndices: const [0, 1, 3],
         processingState: const {
@@ -93,14 +113,16 @@ class CustmAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> play() async {
-    playbackState.add(playbackState.value.copyWith(playing: true, controls: [
-      MediaControl.pause,
-    ]));
+    log('play tapped');
+
+    playbackState.add(playbackState.value
+        .copyWith(playing: true, controls: [MediaControl.pause]));
     await _player.play();
   }
 
   @override
   Future<void> pause() async {
+    log('pause');
     playbackState.add(playbackState.value
         .copyWith(playing: false, controls: [MediaControl.play]));
     await _player.pause();
@@ -121,13 +143,19 @@ class CustmAudioHandler extends BaseAudioHandler {
   Future<void> skipToNext() async {
     if (_player.hasNext) {
       await _player.seek(Duration.zero, index: _player.currentIndex! + 1);
-      await _player.play();
+      // await _player.play();
     }
+  }
+
+  @override
+  Future<void> stop() async {
+    await _player.stop();
+    return super.stop();
   }
 
   @override
   Future<void> skipToPrevious() async {
     await _player.seekToPrevious();
-    await _player.play();
+    // await _player.play();
   }
 }

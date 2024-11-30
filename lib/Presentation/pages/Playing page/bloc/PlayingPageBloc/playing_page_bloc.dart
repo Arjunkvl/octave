@@ -10,6 +10,7 @@ import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifie
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/variables.dart';
 import 'package:marshal/application/Services/Youtube/youtube_api.dart';
 import 'package:marshal/application/dependency_injection.dart';
+import 'package:marshal/core/recently_playing_list.dart';
 import 'package:marshal/data/models/song_model.dart';
 
 part 'playing_page_event.dart';
@@ -42,11 +43,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       await _audioHandler.pause();
       playButtonState.value = PlayButtonState.loading;
       add(UpdatePlayingPageEvent(song: event.song));
-      final Box<Song> box = await Hive.openBox<Song>('tapsBox');
-      if (!box.values.contains(event.song)) {
-        log('song added current length:${box.values.length}');
-        await box.add(event.song);
-      }
+      await addToTaps(eventSong: event.song);
       final mediaItem = MediaItem(
         id: '0',
         title: event.song.title,
@@ -58,6 +55,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
                   event.song.songUrl.contains('googlevideo')
               ? await YoutubeApiServices().getAudioOnlyLink(song: event.song)
               : event.song.songUrl,
+          'song': event.song.artist,
         },
       );
       int indexOfSong = _audioHandler.queue.value
@@ -72,6 +70,10 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       if (!(_audioHandler.mediaItem.value!.extras!['songId'] ==
           event.song.songId)) {
         _audioHandler.skipToQueueItem(indexOfSong);
+      }
+      if (!playingSongList.contains(event.song)) {
+        playingSongList.add(event.song);
+        log(playingSongList.toString());
       }
       _audioHandler.play();
     });
@@ -92,13 +94,14 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       emit(PlayingState(song: event.song));
     });
     on<SkipToNextEvent>((event, emit) async {
-      final Box<Song> box = await Hive.openBox('songsBox');
+      final Box<Song> box = await Hive.openBox('tapsBox');
       final MediaItem lastMediaItem = _audioHandler.queue.value.last;
       final MediaItem currentItem = _audioHandler.mediaItem.value!;
       if (lastMediaItem.extras!['songId'] == currentItem.extras!['songId']) {
         await addNextSong();
       }
       await _audioHandler.skipToNext();
+
       add(UpdatePlayingPageEvent(
           song: box.values
               .where((song) =>
@@ -106,9 +109,11 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
                   song.songId)
               .toList()
               .first));
+
+      await _audioHandler.play();
     });
     on<SkipToPrevious>((event, emit) async {
-      final Box<Song> box = await Hive.openBox('songsBox');
+      final Box<Song> box = await Hive.openBox('tapsBox');
       await _audioHandler.skipToPrevious();
       final Song song = box.values
           .where((song) =>
@@ -116,7 +121,18 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
           .toList()
           .first;
       add(UpdatePlayingPageEvent(song: song));
+      await _audioHandler.play();
     });
+  }
+
+  Future<void> addToTaps({required Song eventSong}) async {
+    final Box<Song> box = await Hive.openBox<Song>('tapsBox');
+
+    if (box.values.where((song) => song.songId == eventSong.songId).isEmpty) {
+      log('song added current length:${box.values.length}');
+      await box.add(eventSong);
+      return;
+    }
   }
 
   Future<void> addNextSong() async {
@@ -136,6 +152,10 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
         .isNotEmpty) {
       await addNextSong();
     }
+    if (!playingSongList.contains(song)) {
+      playingSongList.add(song);
+    }
+    await addToTaps(eventSong: song);
     await _audioHandler.addQueueItems([mediaItem]);
   }
 }

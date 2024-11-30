@@ -21,7 +21,7 @@ class UploadeState extends AudioUploadState {
   final File audioFile;
   final ID3Tag tag;
   final bool isCompleted;
-  UploadeState(
+  const UploadeState(
       {required this.isCompleted, required this.tag, required this.audioFile});
   @override
   List<Object> get props => [tag, isCompleted];

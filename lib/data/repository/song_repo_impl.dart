@@ -112,12 +112,12 @@ class SongRepoImpl implements SongRepo {
     final int endIndex = startIndex + pageSize;
     final int length = box.length;
     if (startIndex > length) {
-      log('called');
+      log('nothingd safhliu called');
       return none();
     }
     final List<Song> songs = [];
     for (int i = startIndex; i < endIndex && i < length; i++) {
-      songs.add(box.getAt(i)!);
+      songs.add(box.getAt((box.values.length - (i % box.values.length)) - 1)!);
     }
     if (songs.isNotEmpty) {
       return some(songs);

@@ -9,7 +9,7 @@ abstract class AudioUploadEvent extends Equatable {
 
 class ExtractMetadataEvent extends AudioUploadEvent {
   final File audioFile;
-  ExtractMetadataEvent({required this.audioFile});
+  const ExtractMetadataEvent({required this.audioFile});
   @override
   List<Object> get props => [audioFile];
 }
@@ -17,7 +17,7 @@ class ExtractMetadataEvent extends AudioUploadEvent {
 class UploadAudioEvent extends AudioUploadEvent {
   final File audioFile;
   final ID3Tag tag;
-  UploadAudioEvent({required this.tag, required this.audioFile});
+  const UploadAudioEvent({required this.tag, required this.audioFile});
   @override
   List<Object> get props => [audioFile, tag];
 }

@@ -9,7 +9,7 @@ sealed class ProgressBarState extends Equatable {
 
 final class ProgressBarInitial extends ProgressBarState {
   final PlayerBarEntity playerBarEntity;
-  ProgressBarInitial({required this.playerBarEntity});
+  const ProgressBarInitial({required this.playerBarEntity});
   @override
   List<Object> get props => [playerBarEntity];
 }

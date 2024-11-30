@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/bloc/LoopModeCubit/loop_mode_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/button_states.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/widget/progress_bar.dart';
+import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/data/models/song_model.dart';
 
 class PlayingPage extends StatelessWidget {
@@ -79,6 +82,7 @@ class PlayingPage extends StatelessWidget {
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 SizedBox(
                                   width: 200,
@@ -89,9 +93,28 @@ class PlayingPage extends StatelessWidget {
                                         Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ),
-                                Visibility(
-                                    visible: false,
-                                    child: SvgPicture.asset(AppIcons.fav)),
+                                BlocBuilder<LoopModeCubit, LoopModeState>(
+                                  builder: (context, state) {
+                                    return IconButton(
+                                        color: Colors.green,
+                                        onPressed: () async {
+                                          await context
+                                              .read<LoopModeCubit>()
+                                              .setLoopMode(
+                                                  loopMode: state.loopMode ==
+                                                          LoopMode.all
+                                                      ? LoopMode.one
+                                                      : LoopMode.all);
+                                        },
+                                        icon: Icon(
+                                            state.loopMode == LoopMode.all
+                                                ? Icons.linear_scale_rounded
+                                                : Icons.loop));
+                                  },
+                                ),
+                                // Visibility(
+                                //     visible: false,
+                                //     child: SvgPicture.asset(AppIcons.fav)),
                               ],
                             ),
                             SizedBox(
@@ -106,8 +129,7 @@ class PlayingPage extends StatelessWidget {
                               children: [
                                 GestureDetector(
                                     onTap: () {
-                                      context
-                                          .read<PlayingPageBloc>()
+                                      locator<PlayingPageBloc>()
                                           .add(SkipToPrevious());
                                     },
                                     child: SvgPicture.asset(
@@ -125,14 +147,12 @@ class PlayingPage extends StatelessWidget {
                                       onPressed: () {
                                         if (playButtonState.value ==
                                             PlayButtonState.paused) {
-                                          context
-                                              .read<PlayingPageBloc>()
+                                          locator<PlayingPageBloc>()
                                               .add(PauseSongEvent());
                                         }
                                         if (playButtonState.value ==
                                             PlayButtonState.playing) {
-                                          context
-                                              .read<PlayingPageBloc>()
+                                          locator<PlayingPageBloc>()
                                               .add(PlaySongEvent());
                                         }
                                       },
@@ -161,8 +181,7 @@ class PlayingPage extends StatelessWidget {
                                 ),
                                 GestureDetector(
                                     onTap: () {
-                                      context
-                                          .read<PlayingPageBloc>()
+                                      locator<PlayingPageBloc>()
                                           .add(SkipToNextEvent());
                                     },
                                     child: SvgPicture.asset(AppIcons.skipNext)),

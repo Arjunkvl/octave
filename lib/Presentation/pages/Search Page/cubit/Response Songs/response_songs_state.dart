@@ -11,7 +11,7 @@ final class ResponseSongsInitial extends ResponseSongsState {}
 
 final class ShowResultState extends ResponseSongsState {
   final List<Song> listOfSongs;
-  ShowResultState({required this.listOfSongs});
+  const ShowResultState({required this.listOfSongs});
   @override
   List<Object> get props => [listOfSongs];
 }

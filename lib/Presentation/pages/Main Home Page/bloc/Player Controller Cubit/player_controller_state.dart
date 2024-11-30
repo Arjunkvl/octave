@@ -11,7 +11,7 @@ final class PlayerControllerInActive extends PlayerControllerState {}
 
 final class PlayerControllerActive extends PlayerControllerState {
   final Song song;
-  PlayerControllerActive({required this.song});
+  const PlayerControllerActive({required this.song});
   @override
   List<Object> get props => [song];
 }

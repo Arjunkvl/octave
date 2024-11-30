@@ -12,7 +12,7 @@ final class CategoryLoading extends CategoryState {}
 final class CategoryLoaded extends CategoryState {
   final List<Category> category;
 
-  CategoryLoaded({required this.category});
+  const CategoryLoaded({required this.category});
   @override
   List<Object> get props => [category];
 }

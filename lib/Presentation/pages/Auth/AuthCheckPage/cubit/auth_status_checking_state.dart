@@ -9,5 +9,5 @@ sealed class AuthStatusCheckingState extends Equatable {
 }
 
 final class AuthStatusCheckingInitial extends AuthStatusCheckingState {
-  AuthStatusCheckingInitial({required super.isLoggedIn});
+  const AuthStatusCheckingInitial({required super.isLoggedIn});
 }

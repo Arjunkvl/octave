@@ -9,5 +9,5 @@ sealed class GreetingsState extends Equatable {
 }
 
 final class GreetingsInitial extends GreetingsState {
-  GreetingsInitial({required super.greeting});
+  const GreetingsInitial({required super.greeting});
 }
