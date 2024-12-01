@@ -9,6 +9,8 @@ sealed class PlaySongState extends Equatable {
 
 final class PlaySongInitial extends PlaySongState {}
 
+final class PlayListEdit extends PlaySongState {}
+
 final class ShowSongPage extends PlaySongState {
   final Song song;
 

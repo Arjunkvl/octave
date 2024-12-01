@@ -5,7 +5,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/core/recently_playing_list.dart';
-import 'package:marshal/data/models/song_model.dart';
 
 Future<AudioHandler> initAudioService() async {
   return await AudioService.init(

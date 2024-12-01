@@ -6,7 +6,9 @@ import 'package:marshal/application/Services/audio_handler.dart';
 import 'package:marshal/application/authRepo/auth_repo.dart';
 import 'package:marshal/application/authUsecases/auth_usecases.dart';
 import 'package:marshal/data/repository/Audio%20Manage%20Repo/audio_manage_impl.dart';
+import 'package:marshal/data/repository/User%20SetUp%20Repo/user_setup_repo_impl.dart';
 import 'package:marshal/data/repository/song_repo_impl.dart';
+import 'package:marshal/domain/Usecases/User%20SetUp%20Usecases/user_setup_usecases.dart';
 import 'package:marshal/domain/Usecases/audio%20manage%20usecases/audio_usecases.dart';
 import 'package:marshal/domain/Usecases/usecases.dart';
 
@@ -16,6 +18,7 @@ void setUpLocator() async {
   // SharedSongRepo sharedSongRepo = SharedSongRepo();
 
   SongRepoImpl repository = SongRepoImpl();
+  UserSetupRepoImpl userSetUpRepo = UserSetupRepoImpl();
   AuthRepo authRepo = AuthRepo();
   AudioManageImpl audioManageRepo = AudioManageImpl();
   locator.registerSingleton<AudioHandler>(await initAudioService());
@@ -31,15 +34,18 @@ void setUpLocator() async {
       GetSongFromSongIds(repository: audioManageRepo));
   locator.registerSingleton<GenerateFileHash>(
       GenerateFileHash(repository: audioManageRepo));
-  locator.registerSingleton<GetRecentSongs>(
-      GetRecentSongs(repository: repository));
-  // locator.registerSingleton<GenerateSongUrls>(
-  //     GenerateSongUrls(repository: repository));
-  locator.registerSingleton<AddSongstoPlayList>(
-      AddSongstoPlayList(repository: repository));
+
   locator.registerSingleton<GetAllSongsWithPagination>(
       GetAllSongsWithPagination(repository: repository));
+  locator.registerSingleton<SetCloudSpace>(
+      SetCloudSpace(repository: userSetUpRepo));
+  locator.registerSingleton<AddPlayListToCloud>(
+      AddPlayListToCloud(repository: userSetUpRepo));
+  locator.registerSingleton<RemovePlayListFromCloud>(
+      RemovePlayListFromCloud(repository: userSetUpRepo));
 
+  locator
+      .registerSingleton<GetPlayLists>(GetPlayLists(repository: userSetUpRepo));
   locator
       .registerSingleton<GetUserSignedUp>(GetUserSignedUp(authRepo: authRepo));
   locator.registerSingleton<UserSignIn>(UserSignIn(authRepo: authRepo));

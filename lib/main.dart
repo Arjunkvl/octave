@@ -14,6 +14,8 @@ import 'package:marshal/Presentation/pages/Home%20Page/bloc/category%20Cubit/cat
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Top%20Tile%20Cubit/top_tile_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/All%20Song/all_songs_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
+import 'package:marshal/Presentation/pages/Library%20page/bloc/Library%20Bloc/library_bloc.dart';
+import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/BottomNavCubit/bottom_nav_cubit.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/LoopModeCubit/loop_mode_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/Progress%20Bar/progress_bar_cubit.dart';
@@ -49,6 +51,9 @@ class Marshal extends StatelessWidget {
           create: (context) => GreetingsCubit(),
         ),
         BlocProvider(
+          create: (context) => BottomNavCubit(),
+        ),
+        BlocProvider(
           create: (context) => ResponseSongsCubit(),
         ),
         BlocProvider(
@@ -81,6 +86,9 @@ class Marshal extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => AudioUploadBloc(),
+        ),
+        BlocProvider(
+          create: (context) => LibraryBloc(),
         ),
         BlocProvider(
           create: (context) => AuthBloc(),
