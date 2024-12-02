@@ -1,24 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/auth_check_page.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/category%20Cubit/category_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Top%20Tile%20Cubit/top_tile_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/All%20Song/all_songs_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/greetings%20cubit/greetings_cubit.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/helpers/sliver_for_sticky_top.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/helpers/variables.dart';
-// import 'package:marshal/Presentation/pages/Home%20Page/helpers/variables.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/body_list_view.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/recent_widget_at_top.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
-// import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/top_tile.dart';
-import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/BottomNavCubit/bottom_nav_cubit.dart';
 import 'package:marshal/application/Services/Spotify/spotify_api.dart';
-import 'package:marshal/application/dependency_injection.dart';
-import 'package:marshal/domain/Usecases/User%20SetUp%20Usecases/user_setup_usecases.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

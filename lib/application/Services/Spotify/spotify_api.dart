@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:hive_flutter/adapters.dart';
 import 'package:http/http.dart' as http;
@@ -62,7 +61,6 @@ class SpotifyService {
       }
     }
 
-    log(listOfReslt.length.toString());
     return listOfReslt;
   }
 }

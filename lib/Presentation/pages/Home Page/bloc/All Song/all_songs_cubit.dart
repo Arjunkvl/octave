@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -17,7 +15,7 @@ class AllSongsCubit extends Cubit<AllSongsState> {
         await locator<GetAllSongsWithPagination>().call(page: page);
     result.fold(() {
       pageIndex = page;
-      log(page.toString());
+
       if (state.songs.isEmpty) {
         emit(NoSongFoundState(songs: []));
       }

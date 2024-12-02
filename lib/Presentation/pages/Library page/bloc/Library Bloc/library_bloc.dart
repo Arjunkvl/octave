@@ -1,8 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hive/hive.dart';
+import 'package:marshal/Presentation/pages/Library%20page/helpers/variables.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/data/models/PlayList%20Model/playlist_model.dart';
 import 'package:marshal/data/models/song_model.dart';
@@ -21,7 +19,6 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       locator<AddPlayListToCloud>().call(playList: event.playlist);
     });
     on<RemovePlayListEvent>((event, emit) async {
-      log('remove called');
       await locator<RemovePlayListFromCloud>().call(title: event.title);
     });
     on<AddToPlayListEvent>((event, emit) async {
@@ -32,6 +29,9 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
             .call(playList: event.playlist.copyWith(songs: newSongList));
       }
       return;
+    });
+    on<PlayListToQueue>((event, emit) async {
+      queueOfSongs = event.playlist.songs;
     });
   }
 }

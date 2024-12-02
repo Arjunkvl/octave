@@ -11,6 +11,11 @@ class GetPlayListsEvent extends LibraryEvent {}
 
 class InitialEvent extends LibraryEvent {}
 
+class PlayListToQueue extends LibraryEvent {
+  final Playlist playlist;
+  const PlayListToQueue({required this.playlist});
+}
+
 class AddPlayListEvent extends LibraryEvent {
   final Playlist playlist;
   const AddPlayListEvent({required this.playlist});

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
@@ -41,6 +39,16 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
       default:
         _player.setLoopMode(LoopMode.all);
     }
+  }
+
+  Future<void> startFreshQueue(List<MediaItem> mediaItems) async {
+    await _playlist.clear();
+    queue.value.clear();
+    final audioSource = mediaItems.map(_createAudioSource);
+    await _playlist.addAll(audioSource.toList());
+    final newQueue = queue.value..addAll(mediaItems);
+    queue.add(newQueue);
+    mediaItem.add(newQueue[0]);
   }
 
   @override
@@ -112,8 +120,6 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> play() async {
-    log('play tapped');
-
     playbackState.add(playbackState.value
         .copyWith(playing: true, controls: [MediaControl.pause]));
     await _player.play();
@@ -121,7 +127,6 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> pause() async {
-    log('pause');
     playbackState.add(playbackState.value
         .copyWith(playing: false, controls: [MediaControl.play]));
     await _player.pause();

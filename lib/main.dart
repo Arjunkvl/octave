@@ -34,7 +34,7 @@ void main(List<String> args) async {
   );
 
   await hiveStartUp();
-  setUpLocator();
+  await setUpLocator();
   SpotifyService().fetchSpotifyApiToken();
   runApp(const Marshal());
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,

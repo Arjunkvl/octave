@@ -14,7 +14,7 @@ import 'package:marshal/domain/Usecases/usecases.dart';
 
 GetIt locator = GetIt.instance;
 
-void setUpLocator() async {
+Future<void> setUpLocator() async {
   // SharedSongRepo sharedSongRepo = SharedSongRepo();
 
   SongRepoImpl repository = SongRepoImpl();
@@ -61,7 +61,4 @@ void setUpLocator() async {
       .registerSingleton<UploadAudio>(UploadAudio(repository: audioManageRepo));
   locator.registerSingleton<UploadEssentials>(
       UploadEssentials(repository: audioManageRepo));
-
-  locator.registerSingleton<UploadToRecentSongs>(
-      UploadToRecentSongs(repository: audioManageRepo));
 }

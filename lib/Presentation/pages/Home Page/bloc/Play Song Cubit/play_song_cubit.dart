@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
@@ -18,7 +16,6 @@ class PlaySongCubit extends Cubit<PlaySongState> {
   void showPlayListAdd() {
     emit(PlaySongInitial());
     emit(PlayListEdit());
-    log('fubction called');
   }
 
   void showAddToPlayList() async {
