@@ -23,6 +23,8 @@ class UpdatePlayingPageEvent extends PlayingPageEvent {
 
 class AddNextSongEvent extends PlayingPageEvent {}
 
+class ShowPlayListChoseEvent extends PlayingPageEvent {}
+
 class PlaySongEvent extends PlayingPageEvent {}
 
 class PauseSongEvent extends PlayingPageEvent {}

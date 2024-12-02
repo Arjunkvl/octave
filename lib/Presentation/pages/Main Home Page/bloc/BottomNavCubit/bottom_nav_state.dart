@@ -13,3 +13,8 @@ final class BottomNavIndexState extends BottomNavState {
   @override
   List<Object> get props => [index];
 }
+
+final class PlayListShowState extends BottomNavState {
+  final Playlist playList;
+  const PlayListShowState({super.index = 0, required this.playList});
+}

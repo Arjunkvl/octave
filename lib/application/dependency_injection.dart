@@ -41,6 +41,8 @@ void setUpLocator() async {
       SetCloudSpace(repository: userSetUpRepo));
   locator.registerSingleton<AddPlayListToCloud>(
       AddPlayListToCloud(repository: userSetUpRepo));
+  locator.registerSingleton<UpdatePlayList>(
+      UpdatePlayList(repository: userSetUpRepo));
   locator.registerSingleton<RemovePlayListFromCloud>(
       RemovePlayListFromCloud(repository: userSetUpRepo));
 

@@ -1,13 +1,25 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
+import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/Presentation/pages/Play%20List%20Page/helpers/cstm_sliver_deligate.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
+import 'package:marshal/data/helping_var.dart';
+import 'package:marshal/data/models/PlayList%20Model/playlist_model.dart';
+import 'package:marshal/data/models/song_model.dart';
 
 class PlayListPage extends StatelessWidget {
-  const PlayListPage({super.key});
+  final Playlist playlist;
+  const PlayListPage({super.key, required this.playlist});
 
   @override
   Widget build(BuildContext context) {
+    log(playlist.songs.toString());
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.all(10.w),
@@ -36,11 +48,13 @@ class PlayListPage extends StatelessWidget {
                         width: 250.w,
                         height: 250.w,
                         decoration: BoxDecoration(
+                          color: CupertinoColors.activeOrange,
                           borderRadius: BorderRadius.circular(15),
-                          image: DecorationImage(
-                            image: CachedNetworkImageProvider(
-                                'https://imgs.search.brave.com/iRRFBkIZ-g9aXcfMm24YoxkwHmrW7a6qkSDR_5XociE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pMS5z/bmRjZG4uY29tL2Fy/dHdvcmtzLTAwMDU3/MDE4ODQxNy03YWI4/a2otdDUwMHg1MDAu/anBn'),
-                          ),
+                          image: playlist.songs.isNotEmpty
+                              ? DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                      playlist.songs.first.coverUrl))
+                              : null,
                         ),
                       ),
                     ),
@@ -61,7 +75,7 @@ class PlayListPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Liked Song',
+                        playlist.title,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       IconButton(
@@ -81,8 +95,15 @@ class PlayListPage extends StatelessWidget {
               separatorBuilder: (context, index) => SizedBox(
                 height: 10.w,
               ),
-              itemCount: 60,
-              itemBuilder: (context, index) => Tilex(),
+              itemCount: playlist.songs.length,
+              itemBuilder: (context, index) => Tilex(
+                song: playlist.songs[index],
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 40.h,
+              ),
             )
           ],
         ),
@@ -92,47 +113,54 @@ class PlayListPage extends StatelessWidget {
 }
 
 class Tilex extends StatelessWidget {
-  const Tilex({super.key});
+  final Song song;
+  const Tilex({super.key, required this.song});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 63.w,
-          height: 63.w,
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: CachedNetworkImageProvider(
-                      'https://imgs.search.brave.com/iRRFBkIZ-g9aXcfMm24YoxkwHmrW7a6qkSDR_5XociE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pMS5z/bmRjZG4uY29tL2Fy/dHdvcmtzLTAwMDU3/MDE4ODQxNy03YWI4/a2otdDUwMHg1MDAu/anBn'))),
-        ),
-        SizedBox(
-          width: 15.w,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 250,
-              child: Text(
-                overflow: TextOverflow.ellipsis,
-                'Perfect',
-                style: Theme.of(context).textTheme.bodyMedium,
+    return GestureDetector(
+      onTap: () {
+        context.read<PlaySongCubit>().playSong(song: song);
+        context.read<PlayingPageBloc>().add(AddSongEvent(song: song));
+        context.read<PlayerControllerCubit>().showPlayerController(song: song);
+      },
+      child: Row(
+        children: [
+          Container(
+            width: 63.w,
+            height: 63.w,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: CachedNetworkImageProvider(song.coverUrl))),
+          ),
+          SizedBox(
+            width: 15.w,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 250,
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  song.title,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
-            ),
-            Text(
-              'Ed HEeer',
-              style: Theme.of(context).textTheme.displayMedium,
-            ),
-          ],
-        ),
-        IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.remove_circle_outline,
-              color: Colors.white,
-            ))
-      ],
+              Text(
+                song.artist,
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+            ],
+          ),
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.remove_circle_outline,
+                color: Colors.white,
+              ))
+        ],
+      ),
     );
   }
 }

@@ -25,7 +25,6 @@ class MainHomePage extends StatelessWidget {
     SearchPage(),
     LibraryPage(),
     AudioUploadPage(),
-    PlayListPage(),
   ];
 
   @override
@@ -35,7 +34,14 @@ class MainHomePage extends StatelessWidget {
           alignment: AlignmentDirectional.bottomCenter,
           children: [
             BlocBuilder<BottomNavCubit, BottomNavState>(
-                builder: (context, state) => _screens[state.index]),
+                builder: (context, state) {
+              if (state is PlayListShowState) {
+                log(state.playList.toString());
+                return PlayListPage(playlist: state.playList);
+              } else {
+                return _screens[state.index];
+              }
+            }),
             BlocBuilder<PlayerControllerCubit, PlayerControllerState>(
               builder: (context, state) {
                 if (state is PlayerControllerActive) {
@@ -60,66 +66,10 @@ class MainHomePage extends StatelessWidget {
                       });
                 }
                 if (state is PlayListEdit) {
-                  TextEditingController textController =
-                      TextEditingController();
                   showModalBottomSheet(
                     isScrollControlled: true,
                     context: context,
-                    builder: (context) => Container(
-                      height: 500.h,
-                      width: double.infinity,
-                      color: Colors.black,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Create A PlayList',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          SizedBox(
-                            height: 50.h,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextField(
-                              controller: textController,
-                              textAlign: TextAlign.center,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'Title',
-                                hintStyle:
-                                    Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                          ),
-                          MaterialButton(
-                            color: Colors.green,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100)),
-                            onPressed: () {
-                              context.read<LibraryBloc>().add(
-                                    AddPlayListEvent(
-                                      playlist: Playlist(
-                                        title: textController.value.text,
-                                        cover: '',
-                                        songs: [],
-                                      ),
-                                    ),
-                                  );
-                              context
-                                  .read<LibraryBloc>()
-                                  .add(GetPlayListsEvent());
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'Create',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    builder: (context) => CreatePlayList(),
                   );
                 }
               },
@@ -152,5 +102,85 @@ class MainHomePage extends StatelessWidget {
             backgroundColor: Colors.transparent,
           );
         }));
+  }
+}
+
+class CreatePlayList extends StatefulWidget {
+  const CreatePlayList({
+    super.key,
+  });
+
+  @override
+  State<CreatePlayList> createState() => _CreatePlayListState();
+}
+
+class _CreatePlayListState extends State<CreatePlayList> {
+  late TextEditingController textEditingController;
+  @override
+  void initState() {
+    textEditingController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 500.h,
+      width: double.infinity,
+      color: Colors.black,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Create A PlayList',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          SizedBox(
+            height: 50.h,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: TextField(
+              controller: textEditingController,
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Title',
+                hintStyle: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+          ),
+          MaterialButton(
+            color: Colors.green,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)),
+            onPressed: () {
+              context.read<LibraryBloc>().add(
+                    AddPlayListEvent(
+                      playlist: Playlist(
+                        title: textEditingController.value.text,
+                        cover: '',
+                        songs: [],
+                      ),
+                    ),
+                  );
+              context.read<LibraryBloc>().add(GetPlayListsEvent());
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Create',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

@@ -9,9 +9,17 @@ abstract class LibraryEvent extends Equatable {
 
 class GetPlayListsEvent extends LibraryEvent {}
 
+class InitialEvent extends LibraryEvent {}
+
 class AddPlayListEvent extends LibraryEvent {
   final Playlist playlist;
   const AddPlayListEvent({required this.playlist});
+}
+
+class AddToPlayListEvent extends LibraryEvent {
+  final Song song;
+  final Playlist playlist;
+  const AddToPlayListEvent({required this.song, required this.playlist});
 }
 
 class RemovePlayListEvent extends LibraryEvent {

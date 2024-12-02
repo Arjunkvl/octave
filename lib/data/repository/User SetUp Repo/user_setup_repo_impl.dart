@@ -45,16 +45,11 @@ class UserSetupRepoImpl implements UserSetupRepo {
     List<Playlist> playlists = [];
     final response =
         await db.collection('users').doc(uid).collection('playLists').get();
-    if (box.values.isEmpty || response.docs.length != box.values.length) {
-      for (var i in response.docs) {
-        playlists.add(Playlist.fromDocument(i.data()));
-      }
-      await box.clear();
-      await box.addAll(playlists);
-    } else {
-      log('from hive');
-      playlists = box.values.toList();
+    for (var i in response.docs) {
+      playlists.add(Playlist.fromDocument(i.data()));
     }
+    await box.clear();
+    await box.addAll(playlists);
     return playlists.reversed.toList();
   }
 
@@ -73,5 +68,21 @@ class UserSetupRepoImpl implements UserSetupRepo {
         .doc(title)
         .delete();
     log('deleted');
+  }
+
+  @override
+  Future<void> updatePlayList({required Playlist playList}) async {
+    final Box<Playlist> box = await Hive.openBox('playListBox');
+    final int index = box.values
+        .toList()
+        .indexWhere((playlist) => playlist.title == playList.title);
+    box.putAt(index, playList);
+    await db
+        .collection('users')
+        .doc(uid)
+        .collection('playLists')
+        .doc(playList.title)
+        .set(playList.toMap());
+    log(box.getAt(index).toString());
   }
 }

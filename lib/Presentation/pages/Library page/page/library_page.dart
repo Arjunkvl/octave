@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 import 'package:marshal/Presentation/pages/Library%20page/bloc/Library%20Bloc/library_bloc.dart';
-import 'package:marshal/application/dependency_injection.dart';
+import 'package:marshal/Presentation/pages/Library%20page/helpers/variables.dart';
+import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/BottomNavCubit/bottom_nav_cubit.dart';
 import 'package:marshal/data/models/PlayList%20Model/playlist_model.dart';
 
 class LibraryPage extends StatelessWidget {
@@ -13,7 +14,10 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<LibraryBloc>().add(GetPlayListsEvent());
+    if (!isPlayListFetched) {
+      context.read<LibraryBloc>().add(GetPlayListsEvent());
+      isPlayListFetched = true;
+    }
     return SafeArea(
       child: CustomScrollView(
         slivers: [
@@ -49,14 +53,33 @@ class LibraryPage extends StatelessWidget {
           ),
           BlocBuilder<LibraryBloc, LibraryState>(builder: (context, state) {
             if (state is LibraryLoaded) {
-              return SliverList.separated(
-                itemCount: state.playLists.length,
-                itemBuilder: (context, index) => Center(
-                    child: PlayListTile(
-                  playlist: state.playLists[index],
-                )),
-                separatorBuilder: (context, index) => SizedBox(
-                  height: 50,
+              return SliverToBoxAdapter(
+                child: RefreshIndicator(
+                  color: Colors.white,
+                  onRefresh: () async {
+                    await Future.delayed(Duration(milliseconds: 600));
+                    if (context.mounted) {
+                      context.read<LibraryBloc>().add(GetPlayListsEvent());
+                    }
+                  },
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: state.playLists.length,
+                    itemBuilder: (context, index) => Center(
+                        child: GestureDetector(
+                      onTap: () {
+                        context
+                            .read<BottomNavCubit>()
+                            .showPlayListPage(playList: state.playLists[index]);
+                      },
+                      child: PlayListTile(
+                        playlist: state.playLists[index],
+                      ),
+                    )),
+                    separatorBuilder: (context, index) => SizedBox(
+                      height: 50,
+                    ),
+                  ),
                 ),
               );
             } else {
@@ -92,11 +115,14 @@ class PlayListTile extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: CachedNetworkImageProvider(
-                      'https://imgs.search.brave.com/KLj4MbSJtC4nOrMk9HiL9Zikmxh2CM7-AfAlDkTvGVA/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zb3Vy/Y2UuYm9vbXBsYXlt/dXNpYy5jb20vZ3Jv/dXAxMC9NMDAvRkUv/NUIvNjI2YWZmZTI5/OTUxNGM5NjhmMzBi/MWY1YzlhODQxNWRf/MzIwXzMyMC5qcGc')),
-              borderRadius: BorderRadius.circular(15),
+              color: CupertinoColors.activeOrange,
+              image: playlist.songs.isNotEmpty
+                  ? DecorationImage(
+                      fit: BoxFit.cover,
+                      image: CachedNetworkImageProvider(
+                          playlist.songs.first.coverUrl))
+                  : null,
+              borderRadius: BorderRadius.circular(25),
             ),
             width: 340.w,
             height: 110.h,

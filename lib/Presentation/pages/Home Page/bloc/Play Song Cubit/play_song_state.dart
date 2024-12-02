@@ -11,6 +11,11 @@ final class PlaySongInitial extends PlaySongState {}
 
 final class PlayListEdit extends PlaySongState {}
 
+final class AddToPlayList extends PlaySongState {
+  final List<Playlist> playlist;
+  const AddToPlayList({required this.playlist});
+}
+
 final class ShowSongPage extends PlaySongState {
   final Song song;
 

@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/data/models/PlayList%20Model/playlist_model.dart';
+import 'package:marshal/data/models/song_model.dart';
 import 'package:marshal/domain/Usecases/User%20SetUp%20Usecases/user_setup_usecases.dart';
 
 part 'library_event.dart';
@@ -17,7 +21,17 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       locator<AddPlayListToCloud>().call(playList: event.playlist);
     });
     on<RemovePlayListEvent>((event, emit) async {
+      log('remove called');
       await locator<RemovePlayListFromCloud>().call(title: event.title);
+    });
+    on<AddToPlayListEvent>((event, emit) async {
+      List<Song> newSongList = event.playlist.songs;
+      if (!event.playlist.songs.contains(event.song)) {
+        newSongList.add(event.song);
+        await locator<UpdatePlayList>()
+            .call(playList: event.playlist.copyWith(songs: newSongList));
+      }
+      return;
     });
   }
 }

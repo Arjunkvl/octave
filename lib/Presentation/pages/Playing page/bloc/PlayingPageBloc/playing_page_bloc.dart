@@ -8,9 +8,11 @@ import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Cont
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/button_states.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/variables.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/widget/playlist_choose_page.dart';
 import 'package:marshal/application/Services/Youtube/youtube_api.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/core/recently_playing_list.dart';
+import 'package:marshal/data/models/PlayList%20Model/playlist_model.dart';
 import 'package:marshal/data/models/song_model.dart';
 
 part 'playing_page_event.dart';

@@ -18,6 +18,14 @@ class AddPlayListToCloud {
   }
 }
 
+class UpdatePlayList {
+  final UserSetupRepoImpl repository;
+  UpdatePlayList({required this.repository});
+  Future<void> call({required Playlist playList}) async {
+    await repository.updatePlayList(playList: playList);
+  }
+}
+
 class RemovePlayListFromCloud {
   final UserSetupRepoImpl repository;
   RemovePlayListFromCloud({required this.repository});

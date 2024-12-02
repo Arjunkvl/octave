@@ -19,6 +19,7 @@ import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/BottomNavCubi
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/LoopModeCubit/loop_mode_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/Progress%20Bar/progress_bar_cubit.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/bloc/cubit/add_to_play_list_cubit.dart';
 import 'package:marshal/Presentation/pages/Search%20Page/cubit/Response%20Songs/response_songs_cubit.dart';
 import 'package:marshal/application/Services/Spotify/spotify_api.dart';
 import 'package:marshal/application/dependency_injection.dart';
@@ -76,6 +77,9 @@ class Marshal extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => CategoryCubit(),
+        ),
+        BlocProvider(
+          create: (context) => AddToPlayListCubit(),
         ),
         BlocProvider(
           create: (context) =>

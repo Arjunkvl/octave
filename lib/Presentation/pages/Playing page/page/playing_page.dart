@@ -6,12 +6,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
+import 'package:marshal/Presentation/pages/Library%20page/bloc/Library%20Bloc/library_bloc.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/LoopModeCubit/loop_mode_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/bloc/cubit/add_to_play_list_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/button_states.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/widget/playlist_choose_page.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/widget/playlist_tile.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/widget/progress_bar.dart';
 import 'package:marshal/application/dependency_injection.dart';
+import 'package:marshal/data/models/PlayList%20Model/playlist_model.dart';
 import 'package:marshal/data/models/song_model.dart';
 
 class PlayingPage extends StatelessWidget {
@@ -97,7 +103,11 @@ class PlayingPage extends StatelessWidget {
                                 Row(
                                   children: [
                                     IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          context
+                                              .read<AddToPlayListCubit>()
+                                              .addToPlayList();
+                                        },
                                         icon: Icon(
                                           CupertinoIcons.add,
                                           color: Colors.white,
@@ -210,6 +220,20 @@ class PlayingPage extends StatelessWidget {
               return SizedBox.shrink();
             }
           },
+        ),
+        BlocListener<AddToPlayListCubit, AddToPlayListState>(
+          listener: (context, state) {
+            if (state is ShowChoosePlayListPage) {
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) => PlayListChoosePage(
+                        playList: state.playlist,
+                        song: song,
+                      ));
+            }
+          },
+          child: SizedBox.shrink(),
         ),
         BlocListener<PlayingPageBloc, PlayingPageState>(
           listener: (context, state) {

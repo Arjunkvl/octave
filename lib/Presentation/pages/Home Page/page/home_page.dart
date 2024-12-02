@@ -54,11 +54,11 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   width: 20.w,
                 ),
-                IconButton(
-                    onPressed: () async {
-                      await locator<GetPlayLists>().call();
-                    },
-                    icon: Icon(Icons.abc)),
+                // IconButton(
+                //     onPressed: () async {
+                //       await locator<GetPlayLists>().call();
+                //     },
+                //     icon: Icon(Icons.abc)),
                 SizedBox(
                   width: 20.w,
                 ),
