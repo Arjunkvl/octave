@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/Progress%20Bar/progress_bar_cubit.dart';
+import 'package:marshal/application/dependency_injection.dart';
 
 class SongProgresssBar extends StatefulWidget {
   const SongProgresssBar({super.key});
@@ -31,7 +32,7 @@ class _SongProgresssBarState extends State<SongProgresssBar>
             progress: state.playerBarEntity.currentDuration,
             total: state.playerBarEntity.totalDuration,
             onSeek: (value) {
-              context.read<PlayingPageBloc>().add(SeekEvent(position: value));
+              locator<PlayingPageBloc>().add(SeekEvent(position: value));
             },
           );
         } else {

@@ -41,14 +41,9 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
     }
   }
 
-  Future<void> startFreshQueue(List<MediaItem> mediaItems) async {
+  Future<void> startFreshQueue() async {
     await _playlist.clear();
-    queue.value.clear();
-    final audioSource = mediaItems.map(_createAudioSource);
-    await _playlist.addAll(audioSource.toList());
-    final newQueue = queue.value..addAll(mediaItems);
-    queue.add(newQueue);
-    mediaItem.add(newQueue[0]);
+    queue.add([]);
   }
 
   @override
@@ -59,9 +54,10 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
     await _playlist.addAll(audioSource.toList());
 
     // notify system
-    final newQueue = queue.value..addAll(mediaItems);
+    final newQueue = List<MediaItem>.from(queue.value);
+    newQueue.addAll(mediaItems);
     queue.add(newQueue);
-    mediaItem.add(newQueue[0]);
+    mediaItem.add(mediaItems[0]);
   }
 
   LockCachingAudioSource _createAudioSource(MediaItem mediaItem) {
@@ -81,8 +77,10 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
       newQueue[index] = newMediaItem;
       queue.add(newQueue);
       mediaItem.add(newMediaItem);
-      locator<PlayingPageBloc>().add(
-          UpdatePlayingPageEvent(song: playingSongList[_player.currentIndex!]));
+      if (playingSongList.isNotEmpty) {
+        locator<PlayingPageBloc>().add(UpdatePlayingPageEvent(
+            song: playingSongList[_player.currentIndex!]));
+      }
     });
   }
 
@@ -145,9 +143,9 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> skipToNext() async {
-    if (_player.hasNext) {
+    if (_player.hasNext &&
+        queue.stream.value.length != _player.currentIndex! + 1) {
       await _player.seek(Duration.zero, index: _player.currentIndex! + 1);
-      // await _player.play();
     }
   }
 
@@ -160,6 +158,5 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
   @override
   Future<void> skipToPrevious() async {
     await _player.seekToPrevious();
-    // await _player.play();
   }
 }

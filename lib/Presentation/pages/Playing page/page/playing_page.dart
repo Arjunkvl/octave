@@ -31,6 +31,14 @@ class PlayingPage extends StatelessWidget {
         ),
         BlocBuilder<PlayingPageBloc, PlayingPageState>(
           builder: (context, state) {
+            if (state is PlayingPageInitial) {
+              return Center(
+                child: Text(
+                  'Fetching Links....',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              );
+            }
             if (state is PlayingState) {
               return Column(
                 children: [

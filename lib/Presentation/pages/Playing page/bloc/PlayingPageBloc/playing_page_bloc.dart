@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:marshal/Presentation/pages/Library%20page/helpers/variables.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/button_states.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
@@ -40,7 +41,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
     on<AddSongEvent>((event, emit) async {
       await _audioHandler.pause();
       playButtonState.value = PlayButtonState.loading;
-      add(UpdatePlayingPageEvent(song: event.song));
+
       await addToTaps(eventSong: event.song);
       final mediaItem = MediaItem(
         id: '0',
@@ -100,8 +101,6 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       }
 
       await _audioHandler.skipToNext();
-
-      await _audioHandler.play();
     });
     on<SkipToPrevious>((event, emit) async {
       // final Box<Song> box = await Hive.openBox('tapsBox');
@@ -118,7 +117,6 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
 
   Future<void> addToTaps({required Song eventSong}) async {
     final Box<Song> box = await Hive.openBox<Song>('tapsBox');
-
     if (box.values.where((song) => song.songId == eventSong.songId).isEmpty) {
       await box.add(eventSong);
       return;
@@ -127,8 +125,12 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
 
   Future<void> addNextSong() async {
     final Box<Song> box = await Hive.openBox('songsBox');
-    final List<Song> list = box.values.toList();
-    if (_audioHandler.queue.value.length == list.length) return;
+    final List<Song> list =
+        queueOfSongs.isEmpty ? box.values.toList() : queueOfSongs;
+    if (_audioHandler.queue.value.length == list.length ||
+        index == list.length - 1) {
+      return;
+    }
     Song song = list[++index];
     final MediaItem mediaItem = MediaItem(
       id: '0',
@@ -147,6 +149,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
         .where((m) => m.extras!['songId'] == song.songId)
         .isNotEmpty) {
       await addNextSong();
+      return;
     }
     if (!playingSongList.contains(song)) {
       playingSongList.add(song);
