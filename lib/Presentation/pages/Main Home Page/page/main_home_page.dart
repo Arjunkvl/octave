@@ -1,182 +1,63 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/page/audio_upload_page.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
-import 'package:marshal/Presentation/pages/Library%20Page/page/library_page.dart';
-import 'package:marshal/Presentation/pages/Library%20page/bloc/Library%20Bloc/library_bloc.dart';
-import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/BottomNavCubit/bottom_nav_cubit.dart';
+import 'package:go_router/go_router.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/widgets/player_controller.dart';
-import 'package:marshal/Presentation/pages/Play%20List%20Page/page/play_list_page.dart';
-import 'package:marshal/Presentation/pages/Search%20Page/page/search_page.dart';
-import 'package:marshal/data/models/PlayList%20Model/playlist_model.dart';
-import '../../Home Page/bloc/Play Song Cubit/play_song_cubit.dart';
-import '../../Playing page/page/playing_page.dart';
+import 'package:marshal/Presentation/pages/Playing%20page/page/playing_page.dart';
+import 'package:marshal/application/Routing/destinations.dart';
 
 class MainHomePage extends StatelessWidget {
-  MainHomePage({super.key});
-
-  final List<Widget> _screens = [
-    HomePage(),
-    SearchPage(),
-    LibraryPage(),
-    AudioUploadPage(),
-  ];
+  final StatefulNavigationShell navigationShell;
+  const MainHomePage({required this.navigationShell, Key? key})
+      : super(key: key ?? const ValueKey<String>('MainHomePage'));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-          alignment: AlignmentDirectional.bottomCenter,
-          children: [
-            BlocBuilder<BottomNavCubit, BottomNavState>(
-                builder: (context, state) {
-              if (state is PlayListShowState) {
-                return PlayListPage(playlist: state.playList);
-              } else {
-                return _screens[state.index];
-              }
-            }),
-            BlocBuilder<PlayerControllerCubit, PlayerControllerState>(
-              builder: (context, state) {
-                if (state is PlayerControllerActive) {
-                  return PlayerController(
-                    song: state.song,
-                  );
-                } else {
-                  return SizedBox.shrink();
-                }
-              },
-            ),
-            BlocListener<PlaySongCubit, PlaySongState>(
-              listener: (context, state) {
-                if (state is ShowSongPage) {
-                  showModalBottomSheet(
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (context) {
-                        return PlayingPage(
-                          song: state.song,
-                        );
-                      });
-                }
-                if (state is PlayListEdit) {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (context) => CreatePlayList(),
-                  );
-                }
-              },
-              child: SizedBox.shrink(),
-            ),
-          ],
-        ),
-        bottomNavigationBar: BlocBuilder<BottomNavCubit, BottomNavState>(
-            builder: (context, state) {
-          return BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            fixedColor: Colors.white,
-            enableFeedback: true,
-            currentIndex: state.index < 3 ? state.index : 0,
-            onTap: (i) {
-              context.read<BottomNavCubit>().setIndex(index: i);
-              if (i == 0) {
-                FocusScope.of(context).unfocus();
-              }
-            },
-            items: [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.search), label: 'Search'),
-              BottomNavigationBarItem(
-                  icon: Icon(CupertinoIcons.book), label: 'Library'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.upload_file), label: 'Upload')
-            ],
-            backgroundColor: Colors.transparent,
-          );
-        }));
-  }
-}
-
-class CreatePlayList extends StatefulWidget {
-  const CreatePlayList({
-    super.key,
-  });
-
-  @override
-  State<CreatePlayList> createState() => _CreatePlayListState();
-}
-
-class _CreatePlayListState extends State<CreatePlayList> {
-  late TextEditingController textEditingController;
-  @override
-  void initState() {
-    textEditingController = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    textEditingController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 500.h,
-      width: double.infinity,
-      color: Colors.black,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      body: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
-          Text(
-            'Create A PlayList',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          SizedBox(
-            height: 50.h,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              controller: textEditingController,
-              textAlign: TextAlign.center,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Title',
-                hintStyle: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
-          ),
-          MaterialButton(
-            color: Colors.green,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(100)),
-            onPressed: () {
-              context.read<LibraryBloc>().add(
-                    AddPlayListEvent(
-                      playlist: Playlist(
-                        title: textEditingController.value.text,
-                        cover: '',
-                        songs: [],
-                      ),
-                    ),
-                  );
-              context.read<LibraryBloc>().add(GetPlayListsEvent());
-              Navigator.pop(context);
+          navigationShell,
+          BlocBuilder<PlayerControllerCubit, PlayerControllerState>(
+            builder: (context, state) {
+              if (state is PlayerControllerActive) {
+                return PlayerController(song: state.song);
+              } else {
+                return SizedBox.shrink();
+              }
             },
-            child: Text(
-              'Create',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+          ),
+          BlocListener<PlaySongCubit, PlaySongState>(
+            listener: (context, state) async {
+              if (state is ShowSongPage) {
+                await showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) {
+                      return PlayingPage(song: state.song);
+                    });
+              }
+            },
+            child: SizedBox.shrink(),
           )
         ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        animationDuration: Duration(milliseconds: 700),
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: (i) {
+          navigationShell.goBranch(i);
+          if (i == 0) {
+            FocusScope.of(context).unfocus();
+          }
+        },
+        indicatorColor: Colors.grey,
+        backgroundColor: Colors.black,
+        destinations: destinations
+            .map((destination) => NavigationDestination(
+                icon: destination.icon, label: destination.label))
+            .toList(),
       ),
     );
   }

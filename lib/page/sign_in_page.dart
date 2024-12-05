@@ -4,17 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
-import 'package:marshal/Presentation/pages/Auth/bloc/auth_bloc.dart';
+import 'package:marshal/Presentation/pages/Auth/SignUp%20Page/page/sign_up_page.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+import '../Presentation/pages/Auth/bloc/auth_bloc.dart';
+
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignInPageState extends State<SignInPage> {
   late TextEditingController _email;
 
   late TextEditingController _password;
@@ -29,13 +31,10 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 32,
-        backgroundColor: Colors.transparent,
-      ),
-      resizeToAvoidBottomInset: true,
-      body: Center(
-        child: SingleChildScrollView(
+      resizeToAvoidBottomInset: false,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.only(top: 60.h),
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -47,14 +46,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: 45,
               ),
               AnimatedTextKit(
-                totalRepeatCount: 1,
+                totalRepeatCount: 2,
                 animatedTexts: [
-                  TyperAnimatedText("Let's Get You Signed Up",
+                  TyperAnimatedText("Octave.",
                       textStyle: Theme.of(context).textTheme.bodyLarge),
                 ],
               ),
               SizedBox(
-                height: 72.h,
+                height: 90.h,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -97,41 +96,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                     SizedBox(
-                      height: 27.h,
-                    ),
-                    Form(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value != _password.text) {
-                            return "Password does not match.";
-                          } else {
-                            return null;
-                          }
-                        },
-                        decoration: InputDecoration(
-                          focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.white,
-                          )),
-                          enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.white,
-                          )),
-                          alignLabelWithHint: true,
-                          label: Text(
-                            'Conform',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
                       height: 40.h,
                     ),
                     BlocListener<AuthBloc, AuthState>(
                       listener: (context, state) {
-                        if (state is SignUpFailed) {
+                        if (state is SignInFailed) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: Colors.red,
                             behavior: SnackBarBehavior.floating,
@@ -151,14 +120,16 @@ class _SignUpPageState extends State<SignUpPage> {
                         }
                       },
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (_email.text != '' && _password.text != '') {
-                            context.read<AuthBloc>().add(
-                                  UserSignUpEvent(
-                                    email: _email.text,
-                                    password: _password.text,
-                                  ),
-                                );
+                            if (context.mounted) {
+                              context.read<AuthBloc>().add(
+                                    UserSignInEvent(
+                                      email: _email.text,
+                                      password: _password.text,
+                                    ),
+                                  );
+                            }
                           }
                         },
                         child: Container(
@@ -170,7 +141,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           child: Center(
                             child: Text(
-                              "SignUp",
+                              "SignIn",
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ),
@@ -179,6 +150,27 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     SizedBox(
                       height: 60.h,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account?",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const SignUpPage()));
+                          },
+                          child: const Text(
+                            "Sign Up!",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

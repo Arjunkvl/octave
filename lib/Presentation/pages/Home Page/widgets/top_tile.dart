@@ -10,7 +10,7 @@ class TopTile extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 13.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: kbackGroundGrey,
+        color: topTileColor,
         borderRadius: BorderRadius.circular(50),
       ),
       child: Text(

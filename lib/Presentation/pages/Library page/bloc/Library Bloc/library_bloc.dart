@@ -25,6 +25,13 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     on<RemovePlayListEvent>((event, emit) async {
       await locator<RemovePlayListFromCloud>().call(title: event.title);
     });
+    on<RemoveFromPlayListEvent>((event, emit) async {
+      List<Song> newSongList = event.playlist.songs;
+      newSongList.removeAt(event.index);
+      await locator<UpdatePlayList>()
+          .call(playList: event.playlist.copyWith(songs: newSongList));
+      return;
+    });
     on<AddToPlayListEvent>((event, emit) async {
       List<Song> newSongList = event.playlist.songs;
       if (!event.playlist.songs.contains(event.song)) {

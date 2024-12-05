@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:marshal/Presentation/pages/Auth/SignUp%20Page/page/sign_up_page.dart';
 import 'package:marshal/Presentation/pages/Auth/bloc/auth_bloc.dart';
-import 'package:marshal/Presentation/pages/Main%20Home%20Page/page/main_home_page.dart';
+import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -113,7 +113,7 @@ class _SignInPageState extends State<SignInPage> {
                         if (state is LogedInState) {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => MainHomePage(),
+                              builder: (context) => HomePage(),
                             ),
                           );
                         }

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
 import 'package:marshal/Presentation/pages/Library%20page/bloc/Library%20Bloc/library_bloc.dart';
 import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Controller%20Cubit/player_controller_cubit.dart';
@@ -22,6 +23,22 @@ class PlayListPage extends StatelessWidget {
         padding: EdgeInsets.all(10.w),
         child: CustomScrollView(
           slivers: [
+            SliverAppBar(
+              toolbarHeight: 30,
+              leading: IconButton(
+                onPressed: () {
+                  context.pop();
+                },
+                icon: Icon(
+                  CupertinoIcons.back,
+                  color: Colors.white,
+                ),
+              ),
+              flexibleSpace: Container(
+                color: Colors.black,
+              ),
+              pinned: true,
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.only(bottom: 70.h),
@@ -45,7 +62,9 @@ class PlayListPage extends StatelessWidget {
                         width: 250.w,
                         height: 250.w,
                         decoration: BoxDecoration(
-                          color: CupertinoColors.activeOrange,
+                          color: playlist.songs.isEmpty
+                              ? CupertinoColors.activeOrange
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(15),
                           image: playlist.songs.isNotEmpty
                               ? DecorationImage(
@@ -93,23 +112,61 @@ class PlayListPage extends StatelessWidget {
                 height: 10.w,
               ),
               itemCount: playlist.songs.length,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () {
-                  context
-                      .read<LibraryBloc>()
-                      .add(PlayListToQueue(playlist: playlist));
-                  context
-                      .read<PlaySongCubit>()
-                      .playSong(song: playlist.songs[index]);
-                  context
-                      .read<PlayingPageBloc>()
-                      .add(AddSongEvent(song: playlist.songs[index]));
-                  context
-                      .read<PlayerControllerCubit>()
-                      .showPlayerController(song: playlist.songs[index]);
+              itemBuilder: (context, index) => Dismissible(
+                confirmDismiss: (direction) async {
+                  bool dissmiss = false;
+                  await showCupertinoDialog(
+                      context: context,
+                      builder: (context) => CupertinoAlertDialog(
+                            title: Text('Removing Song'),
+                            content:
+                                Text('Are you sure you want to remove this'),
+                            actions: <CupertinoDialogAction>[
+                              CupertinoDialogAction(
+                                isDestructiveAction: true,
+                                child: Text('No'),
+                                onPressed: () {
+                                  context.pop();
+                                },
+                              ),
+                              CupertinoDialogAction(
+                                onPressed: () {
+                                  dissmiss = true;
+                                  context.pop();
+                                },
+                                textStyle: TextStyle(color: Colors.white),
+                                child: Text('Yes'),
+                              )
+                            ],
+                          ));
+
+                  return dissmiss;
                 },
-                child: Tilex(
-                  song: playlist.songs[index],
+                onDismissed: (direction) {
+                  context.read<LibraryBloc>().add(
+                        RemoveFromPlayListEvent(
+                            index: index, playlist: playlist),
+                      );
+                },
+                key: Key(playlist.songs[index].title),
+                child: GestureDetector(
+                  onTap: () {
+                    context
+                        .read<LibraryBloc>()
+                        .add(PlayListToQueue(playlist: playlist));
+                    context
+                        .read<PlaySongCubit>()
+                        .playSong(song: playlist.songs[index]);
+                    context
+                        .read<PlayingPageBloc>()
+                        .add(AddSongEvent(song: playlist.songs[index]));
+                    context
+                        .read<PlayerControllerCubit>()
+                        .showPlayerController(song: playlist.songs[index]);
+                  },
+                  child: Tilex(
+                    song: playlist.songs[index],
+                  ),
                 ),
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
+import 'package:marshal/application/Services/Youtube/youtube_api.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/core/recently_playing_list.dart';
 
@@ -48,8 +49,12 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
-    // manage Just Audio
-    final audioSource = mediaItems.map(_createAudioSource);
+    List<Future<AudioSource>> futureAudioSources = mediaItems.map((item) {
+      return _createAudioSource(item); // returns a Future<AudioSource>
+    }).toList();
+
+    // Wait for all futures to complete and return the list of results
+    final audioSource = await Future.wait(futureAudioSources);
 
     await _playlist.addAll(audioSource.toList());
 
@@ -60,9 +65,15 @@ class CustmAudioHandler extends BaseAudioHandler with SeekHandler {
     mediaItem.add(mediaItems[0]);
   }
 
-  LockCachingAudioSource _createAudioSource(MediaItem mediaItem) {
+  Future<LockCachingAudioSource> _createAudioSource(MediaItem mediaItem) async {
     return LockCachingAudioSource(
-      Uri.parse(mediaItem.extras!['songUrl']),
+      Uri.parse(
+        mediaItem.extras!['songUrl'] == '' ||
+                mediaItem.extras!['songUrl'].contains('googlevideo')
+            ? await YoutubeApiServices().getAudioOnlyLink(
+                artist: mediaItem.artist!, title: mediaItem.title)
+            : mediaItem.extras!['songUrl'],
+      ),
       tag: mediaItem,
     );
   }

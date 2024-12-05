@@ -68,6 +68,9 @@ class SearchPage extends StatelessWidget {
                   },
                 ),
               ),
+              SizedBox(
+                height: 50.h,
+              ),
             ],
           ),
         ),

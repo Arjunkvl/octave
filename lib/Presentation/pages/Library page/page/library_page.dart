@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:marshal/Presentation/pages/Library%20page/bloc/Library%20Bloc/library_bloc.dart';
 import 'package:marshal/Presentation/pages/Library%20page/helpers/variables.dart';
-import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/BottomNavCubit/bottom_nav_cubit.dart';
+import 'package:marshal/application/Routing/routes.dart';
 import 'package:marshal/data/models/PlayList%20Model/playlist_model.dart';
 
 class LibraryPage extends StatelessWidget {
@@ -36,7 +36,7 @@ class LibraryPage extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () {
-                  context.read<PlaySongCubit>().showPlayListAdd();
+                  context.push(Routes.createPlaylistPage);
                 },
                 icon: Icon(
                   CupertinoIcons.add,
@@ -68,9 +68,8 @@ class LibraryPage extends StatelessWidget {
                     itemBuilder: (context, index) => Center(
                         child: GestureDetector(
                       onTap: () {
-                        context
-                            .read<BottomNavCubit>()
-                            .showPlayListPage(playList: state.playLists[index]);
+                        context.push(Routes.nestedPlayListPage,
+                            extra: state.playLists[index]);
                       },
                       child: PlayListTile(
                         playlist: state.playLists[index],
@@ -104,6 +103,34 @@ class PlayListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
+      confirmDismiss: (direction) async {
+        bool dissmiss = false;
+        await showCupertinoDialog(
+            context: context,
+            builder: (context) => CupertinoAlertDialog(
+                  title: Text('Deleting Playlist'),
+                  content: Text('Are you sure you want to remove this'),
+                  actions: <CupertinoDialogAction>[
+                    CupertinoDialogAction(
+                      isDestructiveAction: true,
+                      child: Text('No'),
+                      onPressed: () {
+                        context.pop();
+                      },
+                    ),
+                    CupertinoDialogAction(
+                      onPressed: () {
+                        dissmiss = true;
+                        context.pop();
+                      },
+                      textStyle: TextStyle(color: Colors.white),
+                      child: Text('Yes'),
+                    )
+                  ],
+                ));
+
+        return dissmiss;
+      },
       onDismissed: (dir) {
         context
             .read<LibraryBloc>()

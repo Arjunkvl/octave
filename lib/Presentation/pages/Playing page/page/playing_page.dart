@@ -119,7 +119,6 @@ class PlayingPage extends StatelessWidget {
                                     BlocBuilder<LoopModeCubit, LoopModeState>(
                                       builder: (context, state) {
                                         return IconButton(
-                                            color: Colors.green,
                                             onPressed: () async {
                                               await context
                                                   .read<LoopModeCubit>()
@@ -130,10 +129,13 @@ class PlayingPage extends StatelessWidget {
                                                               ? LoopMode.one
                                                               : LoopMode.all);
                                             },
-                                            icon: Icon(
-                                                state.loopMode == LoopMode.all
-                                                    ? Icons.linear_scale_rounded
-                                                    : Icons.loop));
+                                            icon: state.loopMode == LoopMode.all
+                                                ? Icon(
+                                                    Icons.linear_scale_rounded)
+                                                : Icon(
+                                                    Icons.loop,
+                                                    color: Colors.green,
+                                                  ));
                                       },
                                     ),
                                   ],

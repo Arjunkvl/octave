@@ -21,6 +21,12 @@ class AddPlayListEvent extends LibraryEvent {
   const AddPlayListEvent({required this.playlist});
 }
 
+class RemoveFromPlayListEvent extends LibraryEvent {
+  final int index;
+  final Playlist playlist;
+  const RemoveFromPlayListEvent({required this.index, required this.playlist});
+}
+
 class AddToPlayListEvent extends LibraryEvent {
   final Song song;
   final Playlist playlist;

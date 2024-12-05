@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:marshal/Presentation/Theme%20Data/theme_data.dart';
 import 'package:marshal/Presentation/pages/Audio%20Upload%20Page/bloc/audio_upload_bloc.dart';
-import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/auth_check_page.dart';
 import 'package:marshal/Presentation/pages/Auth/AuthCheckPage/cubit/auth_status_checking_cubit.dart';
 import 'package:marshal/Presentation/pages/Auth/bloc/auth_bloc.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/bloc/Play%20Song%20Cubit/play_song_cubit.dart';
@@ -21,6 +20,7 @@ import 'package:marshal/Presentation/pages/Playing%20page/bloc/LoopModeCubit/loo
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/Progress%20Bar/progress_bar_cubit.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/cubit/add_to_play_list_cubit.dart';
 import 'package:marshal/Presentation/pages/Search%20Page/cubit/Response%20Songs/response_songs_cubit.dart';
+import 'package:marshal/application/Routing/router.dart';
 import 'package:marshal/application/Services/Spotify/spotify_api.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/bloc/PlayingPageBloc/playing_page_bloc.dart';
@@ -103,10 +103,10 @@ class Marshal extends StatelessWidget {
         splitScreenMode: true,
         minTextAdapt: true,
         builder: (context, _) {
-          return MaterialApp(
+          return MaterialApp.router(
+            routerConfig: router,
             theme: AppTheme.theme,
             debugShowCheckedModeBanner: false,
-            home: const AuthCheckPage(),
           );
         },
       ),

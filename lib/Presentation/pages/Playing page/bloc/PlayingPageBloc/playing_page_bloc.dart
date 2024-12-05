@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +9,6 @@ import 'package:marshal/Presentation/pages/Main%20Home%20Page/bloc/Player%20Cont
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/button_states.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/change_notifier.dart';
 import 'package:marshal/Presentation/pages/Playing%20page/helpers/variables.dart';
-import 'package:marshal/application/Services/Youtube/youtube_api.dart';
 import 'package:marshal/application/dependency_injection.dart';
 import 'package:marshal/core/recently_playing_list.dart';
 import 'package:marshal/data/models/song_model.dart';
@@ -50,10 +51,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
         artist: event.song.artist,
         extras: {
           'songId': event.song.songId,
-          'songUrl': event.song.songUrl == '' ||
-                  event.song.songUrl.contains('googlevideo')
-              ? await YoutubeApiServices().getAudioOnlyLink(song: event.song)
-              : event.song.songUrl,
+          'songUrl': event.song.songUrl,
           'song': event.song.artist,
         },
       );
@@ -73,7 +71,8 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       if (!playingSongList.contains(event.song)) {
         playingSongList.add(event.song);
       }
-      _audioHandler.play();
+      await _audioHandler.skipToNext();
+      await _audioHandler.play();
     });
 
     //Other Events;
@@ -87,19 +86,18 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       await _audioHandler.seek(event.position);
     });
     on<UpdatePlayingPageEvent>((event, emit) {
+      log('Triggered <3');
       locator<PlayerControllerCubit>().showPlayerController(song: event.song);
       emit(PlayingPageInitial());
       emit(PlayingState(song: event.song));
     });
     on<SkipToNextEvent>((event, emit) async {
-      // final Box<Song> box = await Hive.openBox('tapsBox');
       final MediaItem lastMediaItem = _audioHandler.queue.value.last;
       final MediaItem currentItem = _audioHandler.mediaItem.value!;
 
       if (lastMediaItem.extras!['songId'] == currentItem.extras!['songId']) {
         await addNextSong();
       }
-
       await _audioHandler.skipToNext();
     });
     on<SkipToPrevious>((event, emit) async {
@@ -124,6 +122,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
   }
 
   Future<void> addNextSong() async {
+    log('queue Length:${_audioHandler.queue.value.length}\n PlayingQueList:${queueOfSongs.length}');
     final Box<Song> box = await Hive.openBox('songsBox');
     final List<Song> list =
         queueOfSongs.isEmpty ? box.values.toList() : queueOfSongs;
@@ -132,6 +131,9 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       return;
     }
     Song song = list[++index];
+    _audioHandler.playbackState.value
+        .copyWith(processingState: AudioProcessingState.loading);
+    playButtonState.value = PlayButtonState.loading;
     final MediaItem mediaItem = MediaItem(
       id: '0',
       title: song.title,
@@ -139,9 +141,7 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       artist: song.artist,
       extras: {
         'songId': song.songId,
-        'songUrl': song.songUrl == '' || song.songUrl.contains('googlevideo')
-            ? await YoutubeApiServices().getAudioOnlyLink(song: song)
-            : song.songUrl,
+        'songUrl': song.songUrl,
       },
     );
 
