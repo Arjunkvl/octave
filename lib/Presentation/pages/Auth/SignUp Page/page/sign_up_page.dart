@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:marshal/Presentation/Icons/icon_data.dart';
 import 'package:marshal/Presentation/pages/Auth/bloc/auth_bloc.dart';
-import 'package:marshal/Presentation/pages/Home%20Page/page/home_page.dart';
+import 'package:marshal/application/Routing/routes.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -143,11 +144,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ));
                         }
                         if (state is LogedInState) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(),
-                            ),
-                          );
+                          context.pushReplacement(Routes.homePage);
                         }
                       },
                       child: GestureDetector(

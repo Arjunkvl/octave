@@ -32,9 +32,8 @@ void main(List<String> args) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  await hiveStartUp();
   await setUpLocator();
+  await hiveStartUp();
   SpotifyService().fetchSpotifyApiToken();
   runApp(const Marshal());
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,

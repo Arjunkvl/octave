@@ -21,7 +21,8 @@ Future<void> setUpLocator() async {
   UserSetupRepoImpl userSetUpRepo = UserSetupRepoImpl();
   AuthRepo authRepo = AuthRepo();
   AudioManageImpl audioManageRepo = AudioManageImpl();
-  locator.registerSingleton<AudioHandler>(await initAudioService());
+  AudioHandler audioHandler = await initAudioService();
+  locator.registerSingleton<AudioHandler>(audioHandler);
   //This is for playingPage component cubit
 
   //This is for PlayerController cubit
