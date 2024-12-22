@@ -11,7 +11,6 @@ import 'package:marshal/Presentation/pages/Home%20Page/widgets/body_list_view.da
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/recent_widget_at_top.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/song_list_view_tile.dart';
 import 'package:marshal/Presentation/pages/Home%20Page/widgets/top_tile.dart';
-import 'package:marshal/application/Services/Spotify/spotify_api.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,7 +32,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    SpotifyService().fetchSpotifyApiToken();
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10.w),

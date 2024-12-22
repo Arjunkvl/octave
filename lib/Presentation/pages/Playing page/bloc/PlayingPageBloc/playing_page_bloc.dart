@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -86,7 +84,6 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
       await _audioHandler.seek(event.position);
     });
     on<UpdatePlayingPageEvent>((event, emit) {
-      log('Triggered <3');
       locator<PlayerControllerCubit>().showPlayerController(song: event.song);
       emit(PlayingPageInitial());
       emit(PlayingState(song: event.song));
@@ -122,7 +119,6 @@ class PlayingPageBloc extends Bloc<PlayingPageEvent, PlayingPageState> {
   }
 
   Future<void> addNextSong() async {
-    log('queue Length:${_audioHandler.queue.value.length}\n PlayingQueList:${queueOfSongs.length}');
     final Box<Song> box = await Hive.openBox('songsBox');
     final List<Song> list =
         queueOfSongs.isEmpty ? box.values.toList() : queueOfSongs;

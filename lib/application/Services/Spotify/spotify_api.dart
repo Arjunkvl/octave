@@ -43,7 +43,7 @@ class SpotifyService {
     final SpotifyApiModel api = box.getAt(0);
     final header = {'Authorization': 'Bearer ${api.api}'};
     final String endPoint =
-        'https://api.spotify.com/v1/search?q=$query%&limit=10&type=track';
+        'https://api.spotify.com/v1/search?q=$query&type=track&limit=10';
     final http.Response response =
         await http.get(Uri.parse(endPoint), headers: header);
     if (response.statusCode == 200) {
@@ -59,8 +59,7 @@ class SpotifyService {
             coverUrl: item['album']['images'][1]['url'],
             fileHash: item['id']));
       }
-    }
-
+    } else {}
     return listOfReslt;
   }
 }
