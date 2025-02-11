@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hive/hive.dart';
 import 'package:marshal/data/models/PlayList%20Model/playlist_model.dart';
-import 'package:marshal/domain/repository/User%20SetUp%20Repo/user_setUp_repo.dart';
+import 'package:marshal/domain/repository/User%20SetUp%20Repo/user_setup_repo.dart';
 
 class UserSetupRepoImpl implements UserSetupRepo {
   final FirebaseFirestore db = FirebaseFirestore.instance;
